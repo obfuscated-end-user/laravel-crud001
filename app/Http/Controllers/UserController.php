@@ -14,7 +14,7 @@ class UserController extends Controller {
 			// Rule::unique(table, column) says that this must be unique, no duplicates
 			'name' => ['required', 'min:3', 'max:10', Rule::unique('users', 'name')],	// length must be 3-10 characters
 			'email' => ['required', 'email', Rule::unique('users', 'email')],	// must look like an email
-			'password' => ['required', 'min:8', 'max:200'],	// length must be 8-200 characters
+			'password' => ['required', 'min:8', 'max:200']	// length must be 8-200 characters
 		]);
 
 		// you don't want to store your passwords in plaintext, so you hash them first before
