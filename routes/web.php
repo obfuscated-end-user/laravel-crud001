@@ -3,36 +3,41 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PostController;
-use App\Models\Post;
 
+// routes/web.php is like the URL map of your entire application.
+// It tells Laravel "when user visits this URL, run this code".
+
+// home page, uses an inline function
 Route::get('/', function () {
 	// this returns posts for ALL users
 	// $posts = Post::all();
 	// only return posts for current logged in user
 	// $posts = Post::where('user_id', auth()->guard()->id())->get();
 
+	// shows YOUR posts only (if logged in), empty array otherwise
 	$posts = [];
 	if (auth()->guard()->check()) {
 		$posts = auth()->guard()->user()	// instance of the current user
-			->usersPosts()					// the method you defined in App\Models\Post
+			->usersPosts()					// the method you defined in app\Models\Post
 			->latest()						// order them by the date
 			->get();						// get the relevant data
 	}
 	return view('home', ['posts' => $posts]);
 });
 
-// this uses a controller, read more about it here:
-// https://laravel.com/docs/12.x/controllers
-// instead of passing a function as a second argument, you can pass an array containing:
-// [Controller::class, 'functionName']
+// This uses a controller, read more about it here: https://laravel.com/docs/12.x/controllers
+// Instead of passing a function as a second argument, you can pass an array containing:
+// [Controller::class, 'methodName']
+// This makes it reusable, instead of writing multiple inline functions doing the same thing.
 
 // user-related
 Route::post("/register", [UserController::class, 'register']);
-Route::post("/logout", [UserController::class, 'logout']);
 Route::post("/login", [UserController::class, 'login']);
+Route::post("/logout", [UserController::class, 'logout']);
 
 // post-related
 Route::post("/create-post", [PostController::class, 'createPost']);
+// Laravel automatically findss Post by ID from URL
 Route::get("/edit-post/{post}", [PostController::class, 'showEditScreen']);
 Route::put("/edit-post/{post}", [PostController::class, 'updatePost']);
 Route::delete("/delete-post/{post}", [PostController::class, 'deletePost']);
