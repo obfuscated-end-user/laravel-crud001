@@ -30,9 +30,8 @@ class PostController extends Controller {
 	// shows the edit form, Laravel finds the post automatically by ID from the URL
 	public function showEditScreen(Post $post) {
 		// to prevent unauthorized users entering this page (ex. not the author of this post)
-		if (auth()->guard()->user()->id !== $post['user_id']) {
+		if (auth()->guard()->user()->id !== $post['user_id'])
 			return redirect('/');
-		}
 		// if the name you chose for the post variable (`$post`) matches the dynamic part of your
 		// URL, Laravel is going to perform the database lookup automatically
 		// to be fair, i don't know what this would look like if they weren't the same
@@ -45,9 +44,8 @@ class PostController extends Controller {
 	// whatever the user typed in for their new values
 	public function updatePost(Post $post, Request $request) {
 		// check if they have authorization doing this
-		if (auth()->guard()->user()->id !== $post['user_id']) {
+		if (auth()->guard()->user()->id !== $post['user_id'])
 			return redirect('/');
-		}
 
 		// check if these are filled in
 		$incomingFields = $request->validate([
@@ -66,10 +64,9 @@ class PostController extends Controller {
 
 	public function deletePost(Post $post) {
 		// if you are the author of this post
-		if (auth()->guard()->user()->id === $post['user_id']) {
+		if (auth()->guard()->user()->id === $post['user_id'])
 			// then actually delete the post
 			$post->delete();
-		}
 		// else do nothing
 		return redirect('/');
 	}

@@ -37,10 +37,9 @@ class UserController extends Controller {
 		]);
 
 		// check if name and password is in the database
-		if (auth()->guard()->attempt(['name' => $incomingFields['login-name'], 'password' => $incomingFields['login-password']])) {
+		if (auth()->guard()->attempt(['name' => $incomingFields['login-name'], 'password' => $incomingFields['login-password']]))
 			// generate a session and a cookie
 			$request->session()->regenerate();
-		}
 
 		return redirect('/');
 	}
