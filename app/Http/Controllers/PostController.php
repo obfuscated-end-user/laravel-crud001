@@ -7,47 +7,58 @@ use App\Models\Post;
 
 // The PostController handles all post-related web requests, (create, edit, update, delete).
 class PostController extends Controller {
-	// create a new post
+	// Create a new post.
 	public function createPost(Request $request) {
-		// checks if 'title' and 'body' are filled, see the forms at home.blade.php and its
-		// corresponding name attributes
+		// Checks if 'title' and 'body' are filled, see the forms at home.blade.php and its
+		// corresponding name attributes.
+		// https://api.laravel.com/docs/12.x/Illuminate/Http/Request.html#method_validate
 		$incomingFields = $request->validate([
 			'title' => 'required',
 			'body' => 'required'
 		]);
 
-		// strip any potential HTML and PHP stuff the user might enter
+		// Strip any potential HTML and PHP stuff the user might enter.
+		// https://www.php.net/manual/en/function.strip-tags.php
 		$incomingFields['title'] = strip_tags($incomingFields['title']);
 		$incomingFields['body'] = strip_tags($incomingFields['body']);
 		// use the current user's id as `user_id`
 		$incomingFields['user_id'] = auth()->guard()->id();
 
-		// use Post model to create this field and save to database
+		// Use Post model to create this field and save to database.
+		// I think this is it here?
+		// https://api.laravel.com/docs/12.x/Illuminate/Database/Eloquent/Builder.html#method_create
 		Post::create($incomingFields);
 		return redirect('/');
 	}
 
-	// shows the edit form, Laravel finds the post automatically by ID from the URL
+	// Shows the edit form, Laravel finds the post automatically by ID from the URL.
 	public function showEditScreen(Post $post) {
-		// to prevent unauthorized users entering this page (ex. not the author of this post)
+		// To prevent unauthorized users entering this page (ex. not the author of this post),
 		if (auth()->guard()->user()->id !== $post['user_id'])
+			// redirect them back to the home page.
 			return redirect('/');
-		// if the name you chose for the post variable (`$post`) matches the dynamic part of your
-		// URL, Laravel is going to perform the database lookup automatically
-		// to be fair, i don't know what this would look like if they weren't the same
-		// load edit-post.blade.php with post data
+
+		// Because the route uses {post} and the controller parameter is type-hinted as Post $post,
+		// Laravel automatically performs "route model binding". It fetches the Post with the given
+		// ID and injects it into this method.
+		// More on that here: https://laravel.com/docs/10.x/routing#route-model-binding
+
+		// I know that you don't literally pass the value 7 as $post, but instead, it does something
+		// like this behind the scenes:
+		// $post = Post::findOrFail(7);
+		// which then returns a Post object with relevant data.
+
+		// To be fair, I don't know what this would look like if they weren't the same.
 		return view('edit-post', ['post' => $post]);
 	}
 
-	// saves edited posts
+	// Saves edited posts.
 	// $post is the post we're trying to update and $request gives us the incoming form data,
-	// whatever the user typed in for their new values
+	// whatever the user typed in for their new values.
 	public function updatePost(Post $post, Request $request) {
-		// check if they have authorization doing this
 		if (auth()->guard()->user()->id !== $post['user_id'])
 			return redirect('/');
 
-		// check if these are filled in
 		$incomingFields = $request->validate([
 			'title' => 'required',
 			'body' => 'required'
@@ -56,7 +67,8 @@ class PostController extends Controller {
 		$incomingFields['title'] = strip_tags($incomingFields['title']);
 		$incomingFields['body'] = strip_tags($incomingFields['body']);
 
-		// update the post with the values provided
+		// Update the post with the values provided.
+		// https://api.laravel.com/docs/12.x/Illuminate/Database/Eloquent/Builder.html#method_update
 		$post->update($incomingFields);
 
 		return redirect('/');
