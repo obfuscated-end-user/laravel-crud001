@@ -27,16 +27,18 @@ class PostController extends Controller {
 		// Use Post model to create this field and save to database.
 		// I think this is it here?
 		// https://api.laravel.com/docs/12.x/Illuminate/Database/Eloquent/Builder.html#method_create
-		Post::create($incomingFields);
-		return redirect('/');
+		$post = Post::create($incomingFields);
+
+		// Return a response as a JSON.
+		return response()->json($post, 201);
 	}
 
 	// Shows the edit form, Laravel finds the post automatically by ID from the URL.
 	public function showEditScreen(Post $post) {
 		// To prevent unauthorized users entering this page (ex. not the author of this post),
 		if (auth()->guard()->user()->id !== $post['user_id'])
-			// redirect them back to the home page.
-			return redirect('/');
+			// return a response that prevents them from accessing it.
+			return response()->json(['message' => 'Forbidden'], 403);
 
 		// Because the route uses {post} and the controller parameter is type-hinted as Post $post,
 		// Laravel automatically performs "route model binding". It fetches the Post with the given
@@ -49,7 +51,10 @@ class PostController extends Controller {
 		// which then returns a Post object with relevant data.
 
 		// To be fair, I don't know what this would look like if they weren't the same.
-		return view('edit-post', ['post' => $post]);
+		// return view('edit-post', ['post' => $post]);
+
+		// JSON approach, same thing as above functions
+		return response()->json($post);
 	}
 
 	// Saves edited posts.
@@ -57,7 +62,7 @@ class PostController extends Controller {
 	// whatever the user typed in for their new values.
 	public function updatePost(Post $post, Request $request) {
 		if (auth()->guard()->user()->id !== $post['user_id'])
-			return redirect('/');
+			return response()->json(['message' => 'Forbidden'], 403);
 
 		$incomingFields = $request->validate([
 			'title' => 'required',
@@ -71,15 +76,13 @@ class PostController extends Controller {
 		// https://api.laravel.com/docs/12.x/Illuminate/Database/Eloquent/Builder.html#method_update
 		$post->update($incomingFields);
 
-		return redirect('/');
+		return response()->json($post);
 	}
 
 	public function deletePost(Post $post) {
-		// if you are the author of this post
-		if (auth()->guard()->user()->id === $post['user_id'])
-			// then actually delete the post
-			$post->delete();
-		// else do nothing
-		return redirect('/');
+		if (auth()->guard()->user()->id !== $post['user_id'])
+			return response()->json(['message' => 'Forbidden'], 403);
+		$post->delete();
+		return response()->json(['message' => 'Deleted']);
 	}
 }

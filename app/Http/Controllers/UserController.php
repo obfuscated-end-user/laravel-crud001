@@ -27,9 +27,12 @@ class UserController extends Controller {
 		// so you get the data that was typed by the user before, and store it in your database.
 		$user = User::create($incomingFields);
 
-		// Log the user in and go back to the home page.
+		// Log the user in and return a response.
 		auth()->guard()->login($user);
-		return redirect('/');
+		return response()->json([
+			'user' => $user,
+			'authenticated' => true,
+		], 201);
 	}
 
 	public function login(Request $request) {
@@ -43,17 +46,28 @@ class UserController extends Controller {
 		if (auth()->guard()->attempt([
 			'name' => $incomingFields['login-name'],
 			'password' => $incomingFields['login-password']
-		]))
+		])) {
 			// Create a new session ID for the user.
 			// https://api.laravel.com/docs/12.x/Illuminate/Contracts/Session/Session.html#method_regenerate
 			$request->session()->regenerate();
 
-		return redirect('/');
+			return response()->json([
+				'user' => auth()->guard()->user(),
+				'authenticated' => true,
+			]);
+		}
+
+		return response()->json([
+			'message' => 'Invalid credentials',
+			'authenticated' => false,
+		], 422);
 	}
 
-	public function logout() {
+	public function logout(Request $request) {
 		// log this user out
 		auth()->guard()->logout();
-		return redirect('/');
+		$request->session()->invalidate();
+		$request->session()->regenerateToken();
+		return response()->json(['authenticated' => false]);
 	}
 }

@@ -9,7 +9,8 @@ return new class extends Migration {
 	 * Run the migrations.
 	 */
 	public function up(): void {
-		// create a "posts" table with columns:
+		// https://laravel.com/docs/12.x/migrations#migration-structure
+		// Create a "posts" table with columns:
 		Schema::create('posts', function (Blueprint $table) {
 			$table->id();	// id (auto-incrementing primary key)
 			$table->timestamps();	// created_at/updated_at for timestamps
@@ -23,8 +24,8 @@ return new class extends Migration {
 	 * Reverse the migrations.
 	 */
 	public function down(): void {
-		// this is the "undo" method, it reverses exactly what up() did
-		// deletes the entire `posts` table from your database
+		// This is the "undo" method, it reverses exactly what up() did.
+		// Deletes the entire `posts` table from your database.
 		Schema::dropIfExists('posts');
 	}
 };

@@ -3,26 +3,29 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PostController;
+use App\Models\Post;
 
 // routes/web.php is like the URL map of your entire application.
 // It tells Laravel "when user visits this URL, run this code".
 
-// home page, uses an inline function
-Route::get('/', function () {
-	// this returns posts for ALL users
-	// $posts = Post::all();
-	// only return posts for current logged in user
-	// $posts = Post::where('user_id', auth()->guard()->id())->get();
+Route::get('/me', function () {
+	return response()->json([
+		'authenticated' => auth()->guard()->check(),
+		'user' => auth()->guard()->check() ? auth()->guard()->user() : null,
+	]);
+});
 
-	// shows YOUR posts only (if logged in), empty array otherwise
-	$posts = [];
-	if (auth()->guard()->check()) {
-		$posts = auth()->guard()->user()	// instance of the current user
-			->usersPosts()					// the method you defined in app\Models\Post
-			->latest()						// order them by the date
-			->get();						// get the relevant data
-	}
-	return view('home', ['posts' => $posts]);
+Route::get('/posts', function () {
+	if (!auth()->guard()->check())
+		return response()->json([]);
+
+	$posts = auth()->guard()->user()	// instance of the current user
+		->usersPosts()					// the method you defined in App\Models\Post
+		->latest()						// order them by the date
+		->with('user:id,name')
+		->get();						// get the relevant data
+
+	return response()->json($posts);
 });
 
 // This uses a controller, read more about it here: https://laravel.com/docs/12.x/controllers
@@ -37,7 +40,11 @@ Route::post("/logout", [UserController::class, 'logout']);
 
 // post-related
 Route::post("/create-post", [PostController::class, 'createPost']);
-// Laravel automatically findss Post by ID from URL
+// Laravel automatically finds Post by ID from URL
 Route::get("/edit-post/{post}", [PostController::class, 'showEditScreen']);
 Route::put("/edit-post/{post}", [PostController::class, 'updatePost']);
 Route::delete("/delete-post/{post}", [PostController::class, 'deletePost']);
+
+Route::get('/{any}', function () {
+	return view('app');
+})->where('any', '.*');

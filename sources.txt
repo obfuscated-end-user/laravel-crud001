@@ -1,0 +1,3 @@
+https://stackoverflow.com/questions/67529332/how-does-an-anonymous-function-work-in-onclick-in-react-component
+https://stackoverflow.com/questions/64207880/when-and-how-to-use-semi-colons-in-react-jsand-when-not-to
+https://stackoverflow.com/questions/3149192/difference-between-single-quotes-and-double-quotes-in-javascript
