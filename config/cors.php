@@ -1,7 +1,6 @@
 <?php
 
 return [
-
 	/*
 	|--------------------------------------------------------------------------
 	| Cross-Origin Resource Sharing (CORS) Configuration
@@ -15,20 +14,16 @@ return [
 	|
 	*/
 
+	// This file allows your React frontend (running on Vite's dev server, typically localhost:5173)
+	// to make API requests to your Laravel backend (localhost:8000) without browser blocking.
+
+	// Applies CORS only to API routes and Sanctum CSRF endpoint
 	'paths' => ['api/*', 'sanctum/csrf-cookie'],
-
-	'allowed_methods' => ['*'],
-
-	'allowed_origins' => ['*'],
-
+	'allowed_methods' => ['*'],			// permits all HTTP methods (GET, POST, PUT, DELETE)
+	'allowed_origins' => ['*'],			// allows any domain to make requests (change in prod)
 	'allowed_origins_patterns' => [],
-
-	'allowed_headers' => ['*'],
-
+	'allowed_headers' => ['*'],			// permits all headers
 	'exposed_headers' => [],
-
 	'max_age' => 0,
-
-	'supports_credentials' => false,
-
+	'supports_credentials' => false,	// no cookies/auth credentials sent cross-origin
 ];
