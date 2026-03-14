@@ -30,6 +30,7 @@ class PostController extends Controller {
 		$post = Post::create($incomingFields);
 
 		// Return a response as a JSON.
+		// https://laravel.com/docs/12.x/responses
 		return response()->json($post, 201);
 	}
 
@@ -40,20 +41,7 @@ class PostController extends Controller {
 			// return a response that prevents them from accessing it.
 			return response()->json(['message' => 'Forbidden'], 403);
 
-		// Because the route uses {post} and the controller parameter is type-hinted as Post $post,
-		// Laravel automatically performs "route model binding". It fetches the Post with the given
-		// ID and injects it into this method.
-		// More on that here: https://laravel.com/docs/10.x/routing#route-model-binding
-
-		// I know that you don't literally pass the value 7 as $post, but instead, it does something
-		// like this behind the scenes:
-		// $post = Post::findOrFail(7);
-		// which then returns a Post object with relevant data.
-
-		// To be fair, I don't know what this would look like if they weren't the same.
-		// return view('edit-post', ['post' => $post]);
-
-		// JSON approach, same thing as above functions
+		// Default status is 200.
 		return response()->json($post);
 	}
 

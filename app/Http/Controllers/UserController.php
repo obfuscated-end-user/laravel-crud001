@@ -28,10 +28,11 @@ class UserController extends Controller {
 		$user = User::create($incomingFields);
 
 		// Log the user in and return a response.
+		// https://laravel.com/docs/12.x/responses
 		auth()->guard()->login($user);
 		return response()->json([
 			'user' => $user,
-			'authenticated' => true,
+			'authenticated' => true
 		], 201);
 	}
 
@@ -48,18 +49,20 @@ class UserController extends Controller {
 			'password' => $incomingFields['login-password']
 		])) {
 			// Create a new session ID for the user.
+			// https://laravel.com/docs/12.x/session#regenerating-the-session-id
 			// https://api.laravel.com/docs/12.x/Illuminate/Contracts/Session/Session.html#method_regenerate
 			$request->session()->regenerate();
 
 			return response()->json([
 				'user' => auth()->guard()->user(),
-				'authenticated' => true,
+				'authenticated' => true
 			]);
 		}
 
+		// This will always run if the above attempt fails.
 		return response()->json([
 			'message' => 'Invalid credentials',
-			'authenticated' => false,
+			'authenticated' => false
 		], 422);
 	}
 
