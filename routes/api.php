@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 use App\Models\Post;
 
 Route::get('/user', function (Request $request) {
-    return $request->user();
+	return $request->user();
 });
 
 Route::get('/posts', function () {

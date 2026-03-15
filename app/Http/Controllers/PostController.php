@@ -37,7 +37,7 @@ class PostController extends Controller {
 	// Shows the edit form, Laravel finds the post automatically by ID from the URL.
 	public function showEditScreen(Post $post) {
 		// To prevent unauthorized users entering this page (ex. not the author of this post),
-		if (auth()->guard()->user()->id !== $post['user_id'])
+		if (auth()->guard()->user()->id !== $post->user_id)
 			// return a response that prevents them from accessing it.
 			return response()->json(['message' => 'Forbidden'], 403);
 
@@ -49,7 +49,7 @@ class PostController extends Controller {
 	// $post is the post we're trying to update and $request gives us the incoming form data,
 	// whatever the user typed in for their new values.
 	public function updatePost(Post $post, Request $request) {
-		if (auth()->guard()->user()->id !== $post['user_id'])
+		if (auth()->guard()->user()->id !== $post->user_id)
 			return response()->json(['message' => 'Forbidden'], 403);
 
 		$incomingFields = $request->validate([

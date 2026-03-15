@@ -5,8 +5,7 @@
 	"scripts": {
 		"build": "vite build",
 		"dev:vite": "vite",
-		"dev": "concurrently \"php artisan serve\" \"vite\"",
-		"dev2": "concurrently \"npm run dev:vite\" \"npm run dev:laravel\""
+		"dev": "concurrently \"php artisan serve\" \"vite\""
 	},
 	"devDependencies": {
 		"@tailwindcss/vite": "^4.2.1",
