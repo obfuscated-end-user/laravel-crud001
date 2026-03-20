@@ -21,7 +21,7 @@ export function AuthProvider({ children }) {
 				setAuthenticated(res.data.authenticated);	// set `authenticated` to true,
 				setUser(res.data.user);						// and sets `user` to that user object.
 			})
-			.catch(() => {	// If the request fails (no session foe example),
+			.catch(() => {	// If the request fails (no session for example),
 				setAuthenticated(false);	// set this to false
 				setUser(null);				// and clear user.
 			})
@@ -34,7 +34,7 @@ export function AuthProvider({ children }) {
 	const login = async (name, password) => {
 		const res = await axiosClient.post("/login", {
 			"login-name": name,
-			"login-password": password,
+			"login-password": password
 		});
 		setAuthenticated(res.data.authenticated);
 		setUser(res.data.user ?? null);

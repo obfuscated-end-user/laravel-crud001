@@ -68,7 +68,7 @@ class PostController extends Controller {
 	}
 
 	public function deletePost(Post $post) {
-		if (auth()->guard()->user()->id !== $post['user_id'])
+		if (auth()->guard()->user()->id !== $post->user_id)
 			return response()->json(['message' => 'Forbidden'], 403);
 		$post->delete();
 		return response()->json(['message' => 'Deleted']);

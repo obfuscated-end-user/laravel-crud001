@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PostController;
-use App\Models\Post;
 
 // routes/web.php is like the URL map of your entire application.
 // It tells Laravel "when user visits this URL, run this code".

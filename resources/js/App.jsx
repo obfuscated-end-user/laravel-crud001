@@ -107,7 +107,7 @@ function Home() {
 	// Handle post update helper function.
 	const handleUpdatePost = async (id, title, body) => {
 		try {
-			// Sends "PUT /edit-post/123" with new title/body.
+			// Sends "PUT /edit-post/{id}" with new title/body.
 			// Laravel PostController::updatePost validates and saves to database.
 			// Returns updated post as JSON (res.data)
 			const res = await axiosClient.put(`/edit-post/${id}`, { title, body });
