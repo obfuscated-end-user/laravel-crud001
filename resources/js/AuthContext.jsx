@@ -14,6 +14,8 @@ export function AuthProvider({ children }) {
 	const [user, setUser] = useState(null);	// either the current user object or null
 	const [authenticated, setAuthenticated] = useState(false);	// true if logged in
 	const [loading, setLoading] = useState(true);				// boolean for the initial check
+	const [error, setError] = useState(null);
+	const [loggingIn, setLoggingIn] = useState(false);
 
 	useEffect(() => {	// On mount...
 		axiosClient.get("/me")	// call this to ask Laravel if the user is already logged in.
@@ -32,12 +34,23 @@ export function AuthProvider({ children }) {
 	// Calls "POST /login" with `login-name` and `login-password`, then updates the React state with
 	// the response's `authenticated` and `user`.
 	const login = async (name, password) => {
-		const res = await axiosClient.post("/login", {
-			"login-name": name,
-			"login-password": password
-		});
-		setAuthenticated(res.data.authenticated);
-		setUser(res.data.user ?? null);
+		setLoggingIn(true);	// disable the button while logging in to prevent users spam clicking it
+		try {
+			const res = await axiosClient.post("/login", {
+				"login-name": name,
+				"login-password": password
+			});
+			setAuthenticated(res.data.authenticated);
+			setUser(res.data.user ?? null);
+			setError(null);
+		} catch (err) {
+			setAuthenticated(false);
+			setUser(null);
+			if (err.response?.data?.message) setError(err.response.data.message);
+			else setError("Login failed");
+		} finally {
+			setLoggingIn(false);
+		}
 	};
 
 	// Calls "POST /register", then sets `authenticated` to true and stores the returned user in
@@ -60,7 +73,7 @@ export function AuthProvider({ children }) {
 		// Wraps the React component tree and tells React that everything inside here can read the
 		// value passed as `value={...}`, and that value object is that actual "auth state" that
 		// gets shared.
-		<AuthContext.Provider value={{ user, authenticated, loading, login, register, logout }}>
+		<AuthContext.Provider value={{ user, authenticated, loading, login, register, logout, loggingIn, error }}>
 			{ children /* Represents whatever components are inside <AuthProvider></AuthProvider> tags. */ }
 		</AuthContext.Provider>
 	);
