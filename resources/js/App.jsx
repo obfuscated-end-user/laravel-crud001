@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { AuthProvider, useAuth } from "./AuthContext";
 import axiosClient from "./api/axiosClient";
 import { usePosts } from "./hooks/usePosts";
+import Layout from "./Layout";
 
 // This is the main React app component that shows the login/register UI when the user is not
 // authenticated, the post creation and post list UI when the user is logged in.
@@ -158,120 +159,122 @@ function Home() {
 	// Else if authenticated, show their username, a form to create a new post, a list of all their
 	// posts, and a logout button.
 	return (
-		<div className="max-w-4xl mx-auto p-8 space-y-8">
-			<p className="text-xl font-semibold text-gray-700">
-				You are logged in as <span className="font-bold text-blue-600">{ user?.name }</span>
-			</p>
+		<Layout>
+			<div className="p-8 space-y-8">
+				<p className="text-xl font-semibold text-gray-700">
+					You are logged in as <span className="font-bold text-blue-600">{ user?.name }</span>
+				</p>
 
-			<div className="border-4 border-black p-8 rounded-lg">
-				<h2 className="text-2xl font-semibold mb-6">Create a new post</h2>
-				<form onSubmit={handleCreatePost}>
-					<input
-						name="title" type="text" placeholder="post title" value={ newPost.title }
-						onChange={ e => setNewPost(p => ({ ...p, title: e.target.value })) }
-						className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-xl"
-					/>
-					<textarea
-						name="body" placeholder="body content" value={newPost.body}
-						onChange={e => setNewPost(p => ({ ...p, body: e.target.value }))}
-						className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-32 resize-vertical"
-					/>
-					<button className="w-full bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 cursor-pointer transition-colors font-semibold">
-						Save post
-					</button>
-					{ formError && <p className="text-red-500 mb-3 font-semibold">{ formError }.</p> }
-				</form>
-			</div>
-			{/* You know, this is kinda hard to read. Maybe do something? */}
-			<div className="border-4 border-black p-8 rounded-lg">
-				<h2 className="text-2xl font-semibold mb-6">All posts</h2>
-				{ postsLoading && <p className="text-lg text-gray-500">Loading posts...</p> }
-				<div className="space-y-4">
-					{posts.map(post => (
-						<div
-							key={ post.id }
-							className="bg-gray-100 p-6 m-0 relative border border-gray-300 rounded-lg shadow-sm"
-						>
-							{post.isEditing ? (
-								// edit form, shows when editing
-								<div className="border-2 border-blue-500 p-6 bg-blue-50 rounded-lg">
-									<h3 className="text-xl font-semibold mb-4 text-blue-800">Edit post</h3>
-									<input
-										type="text" value={ post.editTitle || post.title } placeholder="post title"
-										onChange={ (e) => { setPosts(prev => prev.map(
-											p => p.id === post.id ? { ...p, editTitle: e.target.value } : p)); }}
-										className="w-full p-3 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 text-lg"
-									/>
-									<textarea
-										value={ post.editBody || post.body } placeholder="body content"
-										onChange={ (e) => { setPosts(prev => prev.map(
-											p => p.id === post.id ? { ...p, editBody: e.target.value } : p)); }}
-										className="w-full p-3 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 h-24 resize-vertical"
-									/>
-									<div className="flex gap-3 pt-2">
-										<button 
-											onClick={ () => handleUpdatePost(
-												post.id, post.editTitle || post.title, post.editBody || post.body) }
-											className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 cursor-pointer transition-colors font-semibold"
-										>
-											Save
-										</button>
-										<button 
-											onClick={ () => { setPosts(prev => prev.map(p => (
-												{ ...p, isEditing: false, editTitle: "", editBody: "" }))); }}
-											className="px-4 py-2 border border-gray-300 text-gray-700 cursor-pointer rounded-lg hover:bg-gray-50 transition-colors"
-										>
-											Cancel
-										</button>
-									</div>
-								</div>
-							) : (
-								// normal post view
-								<>
-									<h3 className="text-xl font-semibold mb-3">
-										{ post.title } by <span className="text-blue-600 font-bold">{ post.user?.name ?? user.name }</span>
-									</h3>
-									{/* pre-wrap renders newlines in posts instead of removing them */}
-									<div className="whitespace-pre-wrap mb-4 text-gray-800 leading-relaxed">{ post.body }</div>
-									<div className="flex gap-3 pt-4">
-										<button 
-											onClick={ () => { setPosts(prev => prev.map(
-												p => p.id === post.id ? { ...p, isEditing: true } : p)); }}
-											className="text-yellow-600 hover:underline cursor-pointer"
-										>
-											Edit
-										</button>
-										<a 
-											onClick={ () => handleDeletePost(post.id) } 
-											className="text-red-600 hover:underline cursor-pointer"
-										>
-											Delete
-										</a>
-									</div>
-								</>
-							)}
-						</div>
-					))}
+				<div className="border-4 border-black p-8 rounded-lg">
+					<h2 className="text-2xl font-semibold mb-6">Create a new post</h2>
+					<form onSubmit={handleCreatePost}>
+						<input
+							name="title" type="text" placeholder="post title" value={ newPost.title }
+							onChange={ e => setNewPost(p => ({ ...p, title: e.target.value })) }
+							className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-xl"
+						/>
+						<textarea
+							name="body" placeholder="body content" value={newPost.body}
+							onChange={e => setNewPost(p => ({ ...p, body: e.target.value }))}
+							className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-32 resize-vertical"
+						/>
+						<button className="w-full bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 cursor-pointer transition-colors font-semibold">
+							Save post
+						</button>
+						{ formError && <p className="text-red-500 mb-3 font-semibold">{ formError }.</p> }
+					</form>
 				</div>
-			</div>
-			<form onSubmit={ handleLogout } className="text-center">
-				<button className="bg-red-600 text-white px-8 py-3 rounded-lg hover:bg-red-700 cursor-pointer transition-colors font-semibold">
-					Log out
-				</button>
-			</form>
-			{/* Confirmation modal */}
-			{ confirmState.show && (
-				<div className="fixed inset-0 flex items-center justify-center bg-black/50">
-					<div className="bg-white p-6 rounded-lg shadow-lg w-80">
-						<p className="text-lg mb-4">{confirmState.message}</p>
-						<div className="flex justify-end gap-3">
-							<button onClick={closeConfirm} className="px-4 py-2 border rounded cursor-pointer">Cancel</button>
-							<button onClick={confirmState.onConfirm} className="px-4 py-2 bg-red-600 cursor-pointer text-white rounded">Confirm</button>
-						</div>
+				{/* You know, this is kinda hard to read. Maybe do something? */}
+				<div className="border-4 border-black p-8 rounded-lg">
+					<h2 className="text-2xl font-semibold mb-6">All posts</h2>
+					{ postsLoading && <p className="text-lg text-gray-500">Loading posts...</p> }
+					<div className="space-y-4">
+						{posts.map(post => (
+							<div
+								key={ post.id }
+								className="bg-gray-100 p-6 m-0 relative border border-gray-300 rounded-lg shadow-sm"
+							>
+								{post.isEditing ? (
+									// edit form, shows when editing
+									<div className="border-2 border-blue-500 p-6 bg-blue-50 rounded-lg">
+										<h3 className="text-xl font-semibold mb-4 text-blue-800">Edit post</h3>
+										<input
+											type="text" value={ post.editTitle || post.title } placeholder="post title"
+											onChange={ (e) => { setPosts(prev => prev.map(
+												p => p.id === post.id ? { ...p, editTitle: e.target.value } : p)); }}
+											className="w-full p-3 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 text-lg"
+										/>
+										<textarea
+											value={ post.editBody || post.body } placeholder="body content"
+											onChange={ (e) => { setPosts(prev => prev.map(
+												p => p.id === post.id ? { ...p, editBody: e.target.value } : p)); }}
+											className="w-full p-3 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 h-24 resize-vertical"
+										/>
+										<div className="flex gap-3 pt-2">
+											<button 
+												onClick={ () => handleUpdatePost(
+													post.id, post.editTitle || post.title, post.editBody || post.body) }
+												className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 cursor-pointer transition-colors font-semibold"
+											>
+												Save
+											</button>
+											<button 
+												onClick={ () => { setPosts(prev => prev.map(p => (
+													{ ...p, isEditing: false, editTitle: "", editBody: "" }))); }}
+												className="px-4 py-2 border border-gray-300 text-gray-700 cursor-pointer rounded-lg hover:bg-gray-50 transition-colors"
+											>
+												Cancel
+											</button>
+										</div>
+									</div>
+								) : (
+									// normal post view
+									<>
+										<h3 className="text-xl font-semibold mb-3">
+											{ post.title } by <span className="text-blue-600 font-bold">{ post.user?.name ?? user.name }</span>
+										</h3>
+										{/* pre-wrap renders newlines in posts instead of removing them */}
+										<div className="whitespace-pre-wrap mb-4 text-gray-800 leading-relaxed">{ post.body }</div>
+										<div className="flex gap-3 pt-4">
+											<button 
+												onClick={ () => { setPosts(prev => prev.map(
+													p => p.id === post.id ? { ...p, isEditing: true } : p)); }}
+												className="text-yellow-600 hover:underline cursor-pointer"
+											>
+												Edit
+											</button>
+											<a 
+												onClick={ () => handleDeletePost(post.id) } 
+												className="text-red-600 hover:underline cursor-pointer"
+											>
+												Delete
+											</a>
+										</div>
+									</>
+								)}
+							</div>
+						))}
 					</div>
 				</div>
-			) }
-		</div>
+				<form onSubmit={ handleLogout } className="text-center">
+					<button className="bg-red-600 text-white px-8 py-3 rounded-lg hover:bg-red-700 cursor-pointer transition-colors font-semibold">
+						Log out
+					</button>
+				</form>
+				{/* Confirmation modal */}
+				{ confirmState.show && (
+					<div className="fixed inset-0 flex items-center justify-center bg-black/50">
+						<div className="bg-white p-6 rounded-lg shadow-lg w-80">
+							<p className="text-lg mb-4">{confirmState.message}</p>
+							<div className="flex justify-end gap-3">
+								<button onClick={closeConfirm} className="px-4 py-2 border rounded cursor-pointer">Cancel</button>
+								<button onClick={confirmState.onConfirm} className="px-4 py-2 bg-red-600 cursor-pointer text-white rounded">Confirm</button>
+							</div>
+						</div>
+					</div>
+				) }
+			</div>
+		</Layout>
 	);
 }
 
