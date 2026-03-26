@@ -1,4 +1,8 @@
+import { useAuth } from "./AuthContext";
+
 export default function Layout({ children }) {
+	const { logout } = useAuth();
+
 	// Links don't work yet.
 	return (
 		<div className="min-h-screen bg-gray-100 flex justify-center">
@@ -11,6 +15,9 @@ export default function Layout({ children }) {
 					<a className="block hover:underline cursor-pointer">Profile</a>
 					<a className="block hover:underline cursor-pointer">Settings</a>
 					<a className="block hover:underline cursor-pointer">New Post</a>
+					<button onClick={ logout } className="block text-left w-full hover:underline cursor-pointer text-red-600">
+						Log out
+					</button>
 				</nav>
 				{/* Push footer down */}
 				<div className="mt-auto text-sm text-gray-500">

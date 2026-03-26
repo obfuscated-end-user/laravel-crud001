@@ -12,13 +12,16 @@ function Home() {
 	// go to AuthContext.jsx, auth state
 	const { authenticated, loading, user, login, register, logout, loggingIn, error } = useAuth();
 	// go to hooks\usePosts.js, posts state
-	const { posts, setPosts, loading: postsLoading } = usePosts(authenticated);
 	// local states that hold what the user types in forms
 	const [registerForm, setRegisterForm] = useState({ name: "", email: "", password: "" });
 	const [loginForm, setLoginForm] = useState({ name: "", password: "" });
 	const [newPost, setNewPost] = useState({ title: "", body: "" });
 	const [confirmState, setConfirmState] = useState({ show: false, message: "", onConfirm: null });
 	const [formError, setFormError] = useState("");
+	const [view, setView] = useState("feed");	// "feed"/"user"
+	const [selectedUserId, setSelectedUserId] = useState(null);
+	// this has to be at the bottom
+	const { posts, setPosts, loading: postsLoading } = usePosts(authenticated, view, selectedUserId);
 
 	const openConfirm = (message, onConfirm) => {
 		setConfirmState({ show: true, message, onConfirm });
@@ -58,7 +61,7 @@ function Home() {
 			// DO NOT REMOVE res!
 			const res = await axiosClient.post("/create-post", newPost);
 			// setPosts(prev => [res.data, ...prev]);	// Adds the returned post to the list at the top.
-			// refetch posts to get complete data w/ user relationsutp
+			// refetch posts to get complete data w/ user relationship
 			setPosts(await (await axiosClient.get("/posts")).data);
 			setNewPost({ title: "", body: "" });	// Clear the form.
 			closeConfirm();
@@ -81,7 +84,7 @@ function Home() {
 	if (!authenticated) {
 		return (
 			<div className="max-w-2xl mx-auto p-8 space-y-8">
-				<h1 className="text-4xl font-bold text-center mb-12">CRUD application</h1>
+				<h1 className="text-4xl font-bold text-center mb-12">Outside</h1>
 				<div className="border-4 border-black p-8 rounded-lg">
 					<h2 className="text-2xl font-semibold mb-6">Register</h2>
 					<form onSubmit={ handleRegister } className="space-y-4">
@@ -155,9 +158,8 @@ function Home() {
 		});
 	};
 
-	// Attempt to emulate blade template @auth.
-	// Else if authenticated, show their username, a form to create a new post, a list of all their
-	// posts, and a logout button.
+	// Attempt to emulate blade template @auth. If authenticated, show their username, a form to
+	// create a new post, a list of all their posts.
 	return (
 		<Layout>
 			<div className="p-8 space-y-8">
@@ -186,7 +188,15 @@ function Home() {
 				</div>
 				{/* You know, this is kinda hard to read. Maybe do something? */}
 				<div className="border-4 border-black p-8 rounded-lg">
-					<h2 className="text-2xl font-semibold mb-6">All posts</h2>
+					<h2 className="text-2xl font-semibold mb-6">{ view === "user" ? "User posts" : "All posts" }</h2>
+					{ view === "user" && (
+						<button
+							onClick={ () => { setView("feed"); setSelectedUserId(null); }}
+							className="mb-4 text-blue-600 hover:underline"
+						>
+							&lt;&lt; back
+						</button>
+					)}
 					{ postsLoading && <p className="text-lg text-gray-500">Loading posts...</p> }
 					<div className="space-y-4">
 						{posts.map(post => (
@@ -229,38 +239,49 @@ function Home() {
 									</div>
 								) : (
 									// normal post view
+									// the {" "} is absolutely necessary
 									<>
 										<h3 className="text-xl font-semibold mb-3">
-											{ post.title } by <span className="text-blue-600 font-bold">{ post.user?.name ?? user.name }</span>
+											{ post.title } {" "}
+											<span
+												onClick={ () => { setView("user"); setSelectedUserId(post.user?.id); }}
+												className="text-blue-600 font-bold cursor-pointer hover:underline"
+											>
+												@{ post.user?.name ?? user.name }
+											</span>
 										</h3>
+										<p className="text-sm text-gray-500 mb-2">
+											{ new Date(post.created_at).toLocaleString() }
+											{post.updated_at !== post.created_at && (
+												<><br/>{"last updated at " + new Date(post.updated_at).toLocaleString() }</>
+											)}
+										</p>
 										{/* pre-wrap renders newlines in posts instead of removing them */}
 										<div className="whitespace-pre-wrap mb-4 text-gray-800 leading-relaxed">{ post.body }</div>
-										<div className="flex gap-3 pt-4">
-											<button 
-												onClick={ () => { setPosts(prev => prev.map(
-													p => p.id === post.id ? { ...p, isEditing: true } : p)); }}
-												className="text-yellow-600 hover:underline cursor-pointer"
-											>
-												Edit
-											</button>
-											<a 
-												onClick={ () => handleDeletePost(post.id) } 
-												className="text-red-600 hover:underline cursor-pointer"
-											>
-												Delete
-											</a>
-										</div>
+										{/* this should only appear if a post author and current logged in user is the same */}
+										{post.user_id === user?.id && (
+											<div className="flex gap-3 pt-4">
+												<button 
+													onClick={ () => { setPosts(prev => prev.map(
+														p => p.id === post.id ? { ...p, isEditing: true } : p)); }}
+													className="text-yellow-600 hover:underline cursor-pointer"
+												>
+													Edit
+												</button>
+												<button 
+													onClick={ () => handleDeletePost(post.id) } 
+													className="text-red-600 hover:underline cursor-pointer"
+												>
+													Delete
+												</button>
+											</div>
+										)}
 									</>
 								)}
 							</div>
 						))}
 					</div>
 				</div>
-				<form onSubmit={ handleLogout } className="text-center">
-					<button className="bg-red-600 text-white px-8 py-3 rounded-lg hover:bg-red-700 cursor-pointer transition-colors font-semibold">
-						Log out
-					</button>
-				</form>
 				{/* Confirmation modal */}
 				{ confirmState.show && (
 					<div className="fixed inset-0 flex items-center justify-center bg-black/50">

@@ -14,17 +14,20 @@ Route::get('/me', function () {
 	]);
 });
 
+// Fetch all Users' posts
 Route::get('/posts', function () {
-	if (!auth()->guard()->check())
-		return response()->json([]);
-
-	$posts = auth()->guard()->user()	// instance of the current user
-		->usersPosts()					// the method you defined in App\Models\Post
-		->latest()						// order them by the date
-		->with('user:id,name')
-		->get();						// get the relevant data
+	$posts = \App\Models\Post::with('user:id,name')->latest()->get();
 
 	return response()->json($posts);
+});
+
+// Fetch a User's posts
+Route::get('/users/{user}/posts', function (\App\Models\User $user) {
+	// $user is instance of the current user
+	return $user->usersPosts()	// the method you defined in App\Models\Post
+		->latest()				// order them by the date
+		->with('user:id,name')
+		->get();				// get the relevant data
 });
 
 // This uses a controller, read more about it here: https://laravel.com/docs/12.x/controllers
