@@ -16,7 +16,7 @@ Route::get('/me', function () {
 
 // Fetch all Users' posts
 Route::get('/posts', function () {
-	$posts = \App\Models\Post::with('user:id,name')->latest()->get();
+	$posts = \App\Models\Post::with('user:id,name,display_name')->latest()->get();
 
 	return response()->json($posts);
 });
@@ -26,7 +26,7 @@ Route::get('/users/{user}/posts', function (\App\Models\User $user) {
 	// $user is instance of the current user
 	return $user->usersPosts()	// the method you defined in App\Models\Post
 		->latest()				// order them by the date
-		->with('user:id,name')
+		->with('user:id,name,display_name')
 		->get();				// get the relevant data
 });
 

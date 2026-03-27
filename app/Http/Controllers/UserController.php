@@ -10,14 +10,22 @@ class UserController extends Controller {
 	public function register(Request $request) {
 		// Validate the registration data.
 		// If the validation fails, Laravel won't move past this line.
+		$request->merge([
+			'name' => strtolower($request->name)
+		]);
 		$incomingFields = $request->validate([
 			// Rule::unique(table, column) says that this must be unique, no duplicates.
 			// https://api.laravel.com/docs/12.x/Illuminate/Validation/Rule.html#method_unique
-			'name' => ['required', 'min:3', 'max:10', Rule::unique('users', 'name')],	// length must be 3-10 characters
+			'name' => ['required', 'min:3', 'max:30', 'regex:/^[a-z0-9_-]+$/', Rule::unique('users', 'name')],	// length must be 3-30 characters, contain letters, numbers, hyphens, and underscores
+			'display_name' => ['required', 'min:1', 'max:50', 'regex:/^[\pL\pN\s._-]+$/u', 'string'],	// not unique unlike 'name', regex at the end prevents weird unicode abuse
 			'email' => ['required', 'email', Rule::unique('users', 'email')],	// must look like an email
 			'password' => ['required', 'min:8', 'max:200']	// length must be 8-200 characters
+		], [
+			'name.regex' => 'Username can only contain lowercase letters, numbers, hyphens, and underscores.'
 		]);
 
+		// force lowercase
+		$incomingFields['name'] = strtolower($incomingFields['name']);
 		// You don't want to store your passwords in plaintext, so you hash them first before
 		// storing it in your database.
 		// https://www.php.net/manual/en/function.password-hash.php

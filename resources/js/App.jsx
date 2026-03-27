@@ -13,7 +13,7 @@ function Home() {
 	const { authenticated, loading, user, login, register, logout, loggingIn, error } = useAuth();
 	// go to hooks\usePosts.js, posts state
 	// local states that hold what the user types in forms
-	const [registerForm, setRegisterForm] = useState({ name: "", email: "", password: "" });
+	const [registerForm, setRegisterForm] = useState({ name: "", display_name: "", email: "", password: "" });
 	const [loginForm, setLoginForm] = useState({ name: "", password: "" });
 	const [newPost, setNewPost] = useState({ title: "", body: "" });
 	const [confirmState, setConfirmState] = useState({ show: false, message: "", onConfirm: null });
@@ -35,7 +35,7 @@ function Home() {
 		e.preventDefault();	// prevent the page from reloading
 		// Call register(name, email, password), which hits "POST /register", see function in
 		// AuthContext.jsx.
-		await register(registerForm.name, registerForm.email, registerForm.password);
+		await register(registerForm.name, registerForm.display_name, registerForm.email, registerForm.password);
 	};
 
 	const handleLogin = async (e) => {
@@ -92,6 +92,11 @@ function Home() {
 							name="name" type="text" placeholder="name" value={ registerForm.name }
 							onChange={ e => setRegisterForm(f => ({ ...f, name: e.target.value })) }
 							className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+						/>
+						<input
+							name="display_name" type="text" placeholder="display name" value={ registerForm.display_name }
+							onChange={ e => setRegisterForm(f => ({ ...f, display_name: e.target.value })) }
+							className="w-full p-3 border border-gray-300 rounded-lg"
 						/>
 						<input
 							name="email" type="text" placeholder="email" value={ registerForm.email }
@@ -247,7 +252,7 @@ function Home() {
 												onClick={ () => { setView("user"); setSelectedUserId(post.user?.id); }}
 												className="text-blue-600 font-bold cursor-pointer hover:underline"
 											>
-												@{ post.user?.name ?? user.name }
+												{ post.user?.display_name} @{ post.user?.name }
 											</span>
 										</h3>
 										<p className="text-sm text-gray-500 mb-2">
