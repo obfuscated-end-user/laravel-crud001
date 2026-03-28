@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>CRUD application</title>
+	<title>Outside</title>
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 	@viteReactRefresh
 	@vite(["resources/css/app.css", "resources/js/main.jsx"])
