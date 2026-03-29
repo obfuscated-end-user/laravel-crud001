@@ -11,7 +11,8 @@ class UserController extends Controller {
 		// Validate the registration data.
 		// If the validation fails, Laravel won't move past this line.
 		$request->merge([
-			'name' => strtolower($request->name)
+			'name' => strtolower($request->name),
+			'email' => strtolower($request->email)
 		]);
 		$incomingFields = $request->validate([
 			// Rule::unique(table, column) says that this must be unique, no duplicates.

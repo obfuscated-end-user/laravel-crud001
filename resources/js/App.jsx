@@ -10,7 +10,7 @@ import Layout from "./Layout";
 // The main sscreen that changes its layout depending on whether you're logged in or not.
 function Home() {
 	// go to AuthContext.jsx, auth state
-	const { authenticated, loading, user, login, register, logout, loggingIn, error } = useAuth();
+	const { authenticated, loading, user, login, register, logout, loggingIn, registering, loginError, registerError, setLoginError, setRegisterError  } = useAuth();
 	// go to hooks\usePosts.js, posts state
 	// local states that hold what the user types in forms
 	const [registerForm, setRegisterForm] = useState({ name: "", display_name: "", email: "", password: "" });
@@ -89,28 +89,29 @@ function Home() {
 					<h2 className="text-2xl font-semibold mb-6">Register</h2>
 					<form onSubmit={ handleRegister } className="space-y-4">
 						<input
-							name="name" type="text" placeholder="name" value={ registerForm.name }
-							onChange={ e => setRegisterForm(f => ({ ...f, name: e.target.value })) }
+							name="name" type="text" placeholder="name" value={ registerForm.name } disabled={ registering }
+							onChange={ e => { setRegisterForm(f => ({ ...f, name: e.target.value })); setRegisterError(null); } }
 							className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
 						<input
-							name="display_name" type="text" placeholder="display name" value={ registerForm.display_name }
-							onChange={ e => setRegisterForm(f => ({ ...f, display_name: e.target.value })) }
+							name="display_name" type="text" placeholder="display name" value={ registerForm.display_name } disabled={ registering }
+							onChange={ e => { setRegisterForm(f => ({ ...f, display_name: e.target.value })); setRegisterError(null); } }
 							className="w-full p-3 border border-gray-300 rounded-lg"
 						/>
 						<input
 							name="email" type="text" placeholder="email" value={ registerForm.email }
-							onChange={ e => setRegisterForm(f => ({ ...f, email: e.target.value })) }
+							onChange={ e => { setRegisterForm(f => ({ ...f, email: e.target.value })); setRegisterError(null); } } disabled={ registering }
 							className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
 						<input
-							name="password" type="password" placeholder="password" value={ registerForm.password }
-							onChange={ e => setRegisterForm(f => ({ ...f, password: e.target.value })) }
+							name="password" type="password" placeholder="password" value={ registerForm.password } disabled={ registering }
+							onChange={ e => { setRegisterForm(f => ({ ...f, password: e.target.value })); setRegisterError(null);} }
 							className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
-						<button className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 cursor-pointer transition-colors font-semibold">
-							Register
+						<button disabled={ registering } className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 cursor-pointer transition-colors font-semibold">
+							{ registering ? "Registering..." : "Register" }
 						</button>
+						{ registerError && <p className="text-red-500 mb-3 font-semibold">{ registerError }</p> }
 					</form>
 				</div>
 
@@ -130,7 +131,7 @@ function Home() {
 						<button disabled={ loggingIn } className="w-full bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 cursor-pointer transition-colors font-semibold">
 							{ loggingIn ? "Logging in..." : "Log in" }
 						</button>
-						{ error && <p className="text-red-500 mb-3 font-semibold">{ error }.</p> }
+						{ loginError && <p className="text-red-500 mb-3 font-semibold">{ loginError }</p> }
 					</form>
 				</div>
 			</div>
@@ -188,7 +189,7 @@ function Home() {
 						<button className="w-full bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 cursor-pointer transition-colors font-semibold">
 							Save post
 						</button>
-						{ formError && <p className="text-red-500 mb-3 font-semibold">{ formError }.</p> }
+						{ formError && <p className="text-red-500 mb-3 font-semibold">{ formError }</p> }
 					</form>
 				</div>
 				{/* You know, this is kinda hard to read. Maybe do something? */}

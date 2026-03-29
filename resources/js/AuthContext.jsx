@@ -14,8 +14,10 @@ export function AuthProvider({ children }) {
 	const [user, setUser] = useState(null);	// either the current user object or null
 	const [authenticated, setAuthenticated] = useState(false);	// true if logged in
 	const [loading, setLoading] = useState(true);				// boolean for the initial check
-	const [error, setError] = useState(null);
+	const [loginError, setLoginError] = useState(null);
+	const [registerError, setRegisterError] = useState(null);
 	const [loggingIn, setLoggingIn] = useState(false);
+	const [registering, setRegistering] = useState(false);
 
 	useEffect(() => {	// On mount...
 		axiosClient.get("/me")	// call this to ask Laravel if the user is already logged in.
@@ -42,12 +44,12 @@ export function AuthProvider({ children }) {
 			});
 			setAuthenticated(res.data.authenticated);
 			setUser(res.data.user ?? null);
-			setError(null);
+			setLoginError(null);
 		} catch (err) {
 			setAuthenticated(false);
 			setUser(null);
-			if (err.response?.data?.message) setError(err.response.data.message);
-			else setError("Login failed");
+			if (err.response?.data?.message) setLoginError(err.response.data.message);
+			else setLoginError("Login failed");
 		} finally {
 			setLoggingIn(false);
 		}
@@ -56,9 +58,26 @@ export function AuthProvider({ children }) {
 	// Calls "POST /register", then sets `authenticated` to true and stores the returned user in
 	// state.
 	const register = async (name, display_name, email, password) => {
-		const res = await axiosClient.post("/register", { name, display_name, email, password });
-		setAuthenticated(true);
-		setUser(res.data.user);
+		setRegistering(true);
+		try {
+			const res = await axiosClient.post("/register", { name, display_name, email, password });
+			setAuthenticated(true);
+			setUser(res.data.user);
+			setRegisterError(null);
+		} catch (err) {
+			setAuthenticated(false);
+			setUser(null);
+			if (err.response?.data?.errors) {
+				// Laravel validation errors
+				const errors = err.response.data.errors;
+				const firstError = Object.values(errors)[0][0];
+				setRegisterError(firstError);
+			} else {
+				setRegisterError("Registration failed");
+			}
+		} finally {
+			setRegistering(false);
+		}
 	};
 
 	// Calls "POST /logout" on the backend, then clears `user` and sets `authenticated` to false.
@@ -73,7 +92,7 @@ export function AuthProvider({ children }) {
 		// Wraps the React component tree and tells React that everything inside here can read the
 		// value passed as `value={...}`, and that value object is that actual "auth state" that
 		// gets shared.
-		<AuthContext.Provider value={{ user, authenticated, loading, login, register, logout, loggingIn, error }}>
+		<AuthContext.Provider value={{ user, authenticated, loading, login, register, logout, loggingIn, registering, loginError, registerError, setLoginError, setRegisterError }}>
 			{ children /* Represents whatever components are inside <AuthProvider></AuthProvider> tags. */ }
 		</AuthContext.Provider>
 	);
