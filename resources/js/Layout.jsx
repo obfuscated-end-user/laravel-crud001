@@ -14,7 +14,7 @@ export default function Layout({ children }) {
 					<a className="block hover:underline cursor-pointer">Home</a>
 					<a className="block hover:underline cursor-pointer">Profile</a>
 					<a className="block hover:underline cursor-pointer">Settings</a>
-					<a className="block hover:underline cursor-pointer">New Post</a>
+					<a className="block hover:underline cursor-pointer">New post</a>
 					<button onClick={ logout } className="block text-left w-full hover:underline cursor-pointer text-red-600">
 						Log out
 					</button>

@@ -58,7 +58,7 @@ export function AuthProvider({ children }) {
 	// Calls "POST /register", then sets `authenticated` to true and stores the returned user in
 	// state.
 	const register = async (name, display_name, email, password) => {
-		setRegistering(true);
+		setRegistering(true);	// see above, does the same thing
 		try {
 			const res = await axiosClient.post("/register", { name, display_name, email, password });
 			setAuthenticated(true);

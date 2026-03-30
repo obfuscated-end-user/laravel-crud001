@@ -19,7 +19,7 @@ class Post extends Model {
 	// Read more here to see what this measure prevents:
 	// https://laravel.com/docs/12.x/eloquent#mass-assignment
 	// https://stackoverflow.com/questions/22279435/what-does-mass-assignment-mean-in-laravel
-	protected $fillable = ['title', 'body', 'user_id'];
+	protected $fillable = ['body', 'user_id'];
 
 	public function user() {
 		// Return a blog Post (this file) that belongs to a User', and `user_id` belongs to the

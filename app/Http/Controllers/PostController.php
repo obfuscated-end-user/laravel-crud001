@@ -9,17 +9,14 @@ use App\Models\Post;
 class PostController extends Controller {
 	// Create a new post.
 	public function createPost(Request $request) {
-		// Checks if 'title' and 'body' are filled, see the forms at home.blade.php and its
-		// corresponding name attributes.
+		// Checks if 'body' is filled.
 		// https://api.laravel.com/docs/12.x/Illuminate/Http/Request.html#method_validate
 		$incomingFields = $request->validate([
-			'title' => 'required',
-			'body' => 'required'
+			'body' => ['required', 'max:400']
 		]);
 
 		// Strip any potential HTML and PHP stuff the user might enter.
 		// https://www.php.net/manual/en/function.strip-tags.php
-		$incomingFields['title'] = strip_tags($incomingFields['title']);
 		$incomingFields['body'] = strip_tags($incomingFields['body']);
 		// use the current user's id as `user_id`
 		$incomingFields['user_id'] = auth()->guard()->id();
@@ -31,7 +28,10 @@ class PostController extends Controller {
 
 		// Return a response as a JSON.
 		// https://laravel.com/docs/12.x/responses
-		return response()->json($post, 201);
+		return response()->json(
+			$post->load('user:id,name,display_name'),
+			201
+		);
 	}
 
 	// Shows the edit form, Laravel finds the post automatically by ID from the URL.
@@ -53,18 +53,18 @@ class PostController extends Controller {
 			return response()->json(['message' => 'Forbidden'], 403);
 
 		$incomingFields = $request->validate([
-			'title' => 'required',
-			'body' => 'required'
+			'body' => ['required', 'max:400']
 		]);
 
-		$incomingFields['title'] = strip_tags($incomingFields['title']);
 		$incomingFields['body'] = strip_tags($incomingFields['body']);
 
 		// Update the post with the values provided.
 		// https://api.laravel.com/docs/12.x/Illuminate/Database/Eloquent/Builder.html#method_update
 		$post->update($incomingFields);
 
-		return response()->json($post);
+		return response()->json(
+			$post->load('user:id,name,display_name')
+		);
 	}
 
 	public function deletePost(Post $post) {

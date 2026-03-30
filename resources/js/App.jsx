@@ -15,7 +15,7 @@ function Home() {
 	// local states that hold what the user types in forms
 	const [registerForm, setRegisterForm] = useState({ name: "", display_name: "", email: "", password: "" });
 	const [loginForm, setLoginForm] = useState({ name: "", password: "" });
-	const [newPost, setNewPost] = useState({ title: "", body: "" });
+	const [newPost, setNewPost] = useState({ body: "" });
 	const [confirmState, setConfirmState] = useState({ show: false, message: "", onConfirm: null });
 	const [formError, setFormError] = useState("");
 	const [view, setView] = useState("feed");	// "feed"/"user"
@@ -51,19 +51,20 @@ function Home() {
 	const handleCreatePost = async (e) => {
 		e.preventDefault();
 
-		if (!newPost.title.trim() || !newPost.body.trim()) {
-			setFormError("All fields are required");
+		if (!newPost.body.trim()) {
+			setFormError("Content is required");
 			return;
 		}
 
 		openConfirm("Create this post?", async () => {
-			// Sends "POST /create-post" with the new title and body.
+			// Sends "POST /create-post" with the new body.
 			// DO NOT REMOVE res!
-			const res = await axiosClient.post("/create-post", newPost);
+			// const res = await axiosClient.post("/create-post", newPost);
+			const res = await axiosClient.post("/create-post", { body: newPost.body });
 			// setPosts(prev => [res.data, ...prev]);	// Adds the returned post to the list at the top.
 			// refetch posts to get complete data w/ user relationship
 			setPosts(await (await axiosClient.get("/posts")).data);
-			setNewPost({ title: "", body: "" });	// Clear the form.
+			setNewPost({ body: "" });	// Clear the form.
 			closeConfirm();
 		});
 		
@@ -105,7 +106,7 @@ function Home() {
 						/>
 						<input
 							name="password" type="password" placeholder="password" value={ registerForm.password } disabled={ registering }
-							onChange={ e => { setRegisterForm(f => ({ ...f, password: e.target.value })); setRegisterError(null);} }
+							onChange={ e => { setRegisterForm(f => ({ ...f, password: e.target.value })); setRegisterError(null); } }
 							className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
 						<button disabled={ registering } className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 cursor-pointer transition-colors font-semibold">
@@ -139,23 +140,23 @@ function Home() {
 	}
 
 	// Handle post update helper function.
-	const handleUpdatePost = async (id, title, body) => {
-		if (!title.trim() || !body.trim()) {
-			setFormError("All fields are required");
+	const handleUpdatePost = async (id, body) => {
+		if (!body.trim()) {
+			setFormError("Content is required");
 			return;
 		}
 		openConfirm("Save changes to this post?", async () => {
 			try {
-				// Sends "PUT /edit-post/{id}" with new title/body.
+				// Sends "PUT /edit-post/{id}" with new body.
 				// Laravel PostController::updatePost validates and saves to database.
 				// Returns updated post as JSON (res.data)
-				const res = await axiosClient.put(`/edit-post/${id}`, { title, body });
+				const res = await axiosClient.put(`/edit-post/${id}`, { body });
 				// prev.map creates new array and finds post where p.id === id (the one being edited), replaces it with
 				// res.data (fresh backend data) and resets editing flags.
 				// Then, it keeps all other posts unchanged (": p" at the end), and { ...res.data, isEditing: false, ... }
 				// merges backend data with UI state reset.
 				setPosts(prev => prev.map(p => 
-					p.id === id ? { ...res.data, isEditing: false, editTitle: "", editBody: "" } : p
+					p.id === id ? { ...res.data, isEditing: false, editBody: "" } : p
 				));
 				closeConfirm();
 			} catch (err) {
@@ -173,19 +174,17 @@ function Home() {
 					You are logged in as <span className="font-bold text-blue-600">{ user?.name }</span>
 				</p>
 
-				<div className="border-4 border-black p-8 rounded-lg">
-					<h2 className="text-2xl font-semibold mb-6">Create a new post</h2>
+				<div className="border-1 p-8 rounded-lg">
+					<h2 className="text-2xl font-semibold mb-6">New post</h2>
 					<form onSubmit={handleCreatePost}>
-						<input
-							name="title" type="text" placeholder="post title" value={ newPost.title }
-							onChange={ e => setNewPost(p => ({ ...p, title: e.target.value })) }
-							className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-xl"
-						/>
 						<textarea
-							name="body" placeholder="body content" value={newPost.body}
+							name="body" placeholder="Things beyond your screen..." value={ newPost.body } maxLength={ 400 }
 							onChange={e => setNewPost(p => ({ ...p, body: e.target.value }))}
-							className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-32 resize-vertical"
+							className="w-full p-4 border border-gray-300 rounded-lg resize-none"
 						/>
+						<p className="text-sm text-gray-500">
+							{newPost.body.length}/400
+						</p><br/>
 						<button className="w-full bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 cursor-pointer transition-colors font-semibold">
 							Save post
 						</button>
@@ -193,8 +192,7 @@ function Home() {
 					</form>
 				</div>
 				{/* You know, this is kinda hard to read. Maybe do something? */}
-				<div className="border-4 border-black p-8 rounded-lg">
-					<h2 className="text-2xl font-semibold mb-6">{ view === "user" ? "User posts" : "All posts" }</h2>
+				<div className="rounded-lg">
 					{ view === "user" && (
 						<button
 							onClick={ () => { setView("feed"); setSelectedUserId(null); }}
@@ -208,35 +206,29 @@ function Home() {
 						{posts.map(post => (
 							<div
 								key={ post.id }
-								className="bg-gray-100 p-6 m-0 relative border border-gray-300 rounded-lg shadow-sm"
+								className="bg-gray-100 p-6 m-0 relative border border-gray-300 rounded-lg shadow-sm mb-2"
 							>
 								{post.isEditing ? (
 									// edit form, shows when editing
 									<div className="border-2 border-blue-500 p-6 bg-blue-50 rounded-lg">
 										<h3 className="text-xl font-semibold mb-4 text-blue-800">Edit post</h3>
-										<input
-											type="text" value={ post.editTitle || post.title } placeholder="post title"
-											onChange={ (e) => { setPosts(prev => prev.map(
-												p => p.id === post.id ? { ...p, editTitle: e.target.value } : p)); }}
-											className="w-full p-3 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 text-lg"
-										/>
 										<textarea
 											value={ post.editBody || post.body } placeholder="body content"
 											onChange={ (e) => { setPosts(prev => prev.map(
 												p => p.id === post.id ? { ...p, editBody: e.target.value } : p)); }}
-											className="w-full p-3 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 h-24 resize-vertical"
+											className="w-full p-4 border border-gray-300 rounded-lg resize-none"
 										/>
 										<div className="flex gap-3 pt-2">
 											<button 
 												onClick={ () => handleUpdatePost(
-													post.id, post.editTitle || post.title, post.editBody || post.body) }
+													post.id, post.editBody || post.body) }
 												className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 cursor-pointer transition-colors font-semibold"
 											>
 												Save
 											</button>
 											<button 
 												onClick={ () => { setPosts(prev => prev.map(p => (
-													{ ...p, isEditing: false, editTitle: "", editBody: "" }))); }}
+													{ ...p, isEditing: false, editBody: "" }))); }}
 												className="px-4 py-2 border border-gray-300 text-gray-700 cursor-pointer rounded-lg hover:bg-gray-50 transition-colors"
 											>
 												Cancel
@@ -248,20 +240,19 @@ function Home() {
 									// the {" "} is absolutely necessary
 									<>
 										<h3 className="text-xl font-semibold mb-3">
-											{ post.title } {" "}
 											<span
 												onClick={ () => { setView("user"); setSelectedUserId(post.user?.id); }}
 												className="text-blue-600 font-bold cursor-pointer hover:underline"
 											>
 												{ post.user?.display_name} @{ post.user?.name }
+											</span>&nbsp;
+											<span className="text-sm text-gray-500 mb-2">
+												{ new Date(post.created_at).toLocaleString() }
+												{post.updated_at !== post.created_at && (
+													<>{", last edited at " + new Date(post.updated_at).toLocaleString() }</>
+												)}
 											</span>
 										</h3>
-										<p className="text-sm text-gray-500 mb-2">
-											{ new Date(post.created_at).toLocaleString() }
-											{post.updated_at !== post.created_at && (
-												<><br/>{"last updated at " + new Date(post.updated_at).toLocaleString() }</>
-											)}
-										</p>
 										{/* pre-wrap renders newlines in posts instead of removing them */}
 										<div className="whitespace-pre-wrap mb-4 text-gray-800 leading-relaxed">{ post.body }</div>
 										{/* this should only appear if a post author and current logged in user is the same */}
