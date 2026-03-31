@@ -14,12 +14,16 @@ class Post extends Model {
 	// https://laravel.com/docs/12.x/eloquent-factories
 	use HasFactory;
 
+	// Post ID is a random 15-char string containing letters, numbers, hyphens, and underscores.
+	public $incrementing = false;
+	protected $keyType = 'string';
+
 	// This is a security whitelist that tells Laravel "these fields are safe to fill from user
 	// input all at once".
 	// Read more here to see what this measure prevents:
 	// https://laravel.com/docs/12.x/eloquent#mass-assignment
 	// https://stackoverflow.com/questions/22279435/what-does-mass-assignment-mean-in-laravel
-	protected $fillable = ['body', 'user_id'];
+	protected $fillable = ['id', 'body', 'user_id'];
 
 	public function user() {
 		// Return a blog Post (this file) that belongs to a User', and `user_id` belongs to the

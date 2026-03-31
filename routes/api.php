@@ -16,11 +16,9 @@ Route::get('/posts', function () {
 
 Route::post('/posts', function (Request $request) {
 	$data = $request->validate([
-		'title' => 'required',
-		'body' => 'required'
+		'body' => ['required', 'max:400']
 	]);
 
-	$data['title'] = strip_tags($data['title']);
 	$data['body'] = strip_tags($data['body']);
 	$data['user_id'] = auth()->guard()->id();
 
@@ -41,8 +39,7 @@ Route::put('/posts/{post}', function (Post $post, Request $request) {
 		abort(403);
 
 	$data = $request->validate([
-		'title'=>'required',
-		'body'=>'required'
+		'body' => ['required', 'max:400']
 	]);
 
 	$post->update($data);

@@ -7,6 +7,18 @@ use App\Models\Post;
 
 // The PostController handles all post-related web requests, (create, edit, update, delete).
 class PostController extends Controller {
+	// Generate Post ID.
+	function generatePostId() {
+		$chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+		do {
+			$id = '';
+			for ($i = 0; $i < 15; $i++)
+				$id .= $chars[random_int(0, strlen($chars) - 1)];
+		} while (\App\Models\Post::where('id', $id)->exists());
+
+		return $id;
+	}
+
 	// Create a new post.
 	public function createPost(Request $request) {
 		// Checks if 'body' is filled.
@@ -20,6 +32,7 @@ class PostController extends Controller {
 		$incomingFields['body'] = strip_tags($incomingFields['body']);
 		// use the current user's id as `user_id`
 		$incomingFields['user_id'] = auth()->guard()->id();
+		$incomingFields['id'] = $this->generatePostId();
 
 		// Use Post model to create this field and save to database.
 		// I think this is it here?

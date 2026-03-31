@@ -30,6 +30,21 @@ Route::get('/users/{user}/posts', function (\App\Models\User $user) {
 		->get();				// get the relevant data
 });
 
+Route::get('/api/users/{user:name}', function (\App\Models\User $user) {
+	return $user;
+});
+
+Route::get('/api/users/{user:name}/posts', function (\App\Models\User $user) {
+	return $user->usersPosts()
+		->with('user:id,name,display_name')
+		->latest()
+		->get();
+});
+
+Route::get('/api/posts/{post}', function (\App\Models\Post $post) {
+	return $post->load('user:id,name,display_name');
+});
+
 // This uses a controller, read more about it here: https://laravel.com/docs/12.x/controllers
 // Instead of passing a function as a second argument, you can pass an array containing:
 // [Controller::class, 'methodName']
@@ -47,6 +62,15 @@ Route::get("/edit-post/{post}", [PostController::class, 'showEditScreen']);
 Route::put("/edit-post/{post}", [PostController::class, 'updatePost']);
 Route::delete("/delete-post/{post}", [PostController::class, 'deletePost']);
 
+Route::get('/{user:name}', function (\App\Models\User $user) {
+	return view('app');
+});
+
+Route::get('/{user:name}/{post}', function (\App\Models\User $user, \App\Models\Post $post) {
+	return view('app');
+})->where('post', '[A-Za-z0-9_-]{1,15}');
+
+// THIS NEEDS TO BE LAST
 Route::get('/{any}', function () {
 	return view('app');
 })->where('any', '.*');
