@@ -47,15 +47,18 @@ export default function PostPage() {
 				{/* post */}
 				<div className="bg-gray-100 p-6 border rounded-lg">
 					<h3 className="mb-2">
-						<span onClick={ () => navigate(`/${post.user?.name}`) } className="text-blue-600 font-bold cursor-pointer hover:underline">
-							{ post.user?.display_name } @{ post.user?.name }
+						<span
+							onClick={() => navigate(`/${post.user?.name}`)}
+							className="text-blue-600 font-bold cursor-pointer hover:underline"
+						>
+							{post.user?.display_name} @{post.user?.name}
 						</span>
 					</h3>
 					<p className="text-sm text-gray-500 mb-3">
-						{ new Date(post.created_at).toLocaleString() }
-						{ post.updated_at !== post.created_at && (
+						{new Date(post.created_at).toLocaleString()}
+						{post.updated_at !== post.created_at && (
 							<><br/>{ "last edited at " + new Date(post.updated_at).toLocaleString() }</>
-						) }
+						)}
 					</p>
 					{isEditing ? (
 						<div>

@@ -97,6 +97,7 @@ function Home() {
 
 	// This part consists of the HTML stuff, and some lines tend to get very long.
 	// Consider this to be an exception to the "100-char rule".
+	// Better idea: split this into multiple files.
 
 	// Show "Loading..." while checking if the user is already logged in.
 	if (loading) return <div className="text-center p-8 text-xl">Loading...</div>;
@@ -240,13 +241,16 @@ function Home() {
 									>
 										<h3 className="text-xl font-semibold mb-4 text-blue-800">Edit post</h3>
 										<textarea
-											value={ post.editBody || post.body } placeholder="body content"
+											value={post.editBody ?? post.body} placeholder="You can't leave this blank!"
+											maxLength={400}
 											onChange={(e) => { setPosts(prev => prev.map(p => p.id === post.id ? {...p, editBody: e.target.value} : p));}}
 											className="w-full p-4 border border-gray-300 rounded-lg resize-none"
 										/>
+										<p className="text-sm text-gray-500">{(post.editBody ?? post.body).length}/400</p>
 										<div className="flex gap-3 pt-2">
 											<button 
-												onClick={() => handleUpdatePost(post.id, post.editBody || post.body)}
+												disabled={!post.editBody?.trim()}
+												onClick={() => handleUpdatePost(post.id, post.editBody ?? "")}
 												className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 cursor-pointer transition-colors font-semibold"
 											>
 												Save
@@ -286,7 +290,7 @@ function Home() {
 													onClick={(e) => {
 														e.stopPropagation();
 														setPosts(prev => prev.map(
-															p => p.id === post.id ? { ...p, isEditing: true } : p));}}
+															p => p.id === post.id ? { ...p, isEditing: true, editBody: p.body } : p));}}
 												>
 													Edit
 												</button>
