@@ -109,51 +109,51 @@ function Home() {
 				<h1 className="text-4xl font-bold text-center mb-12">Outside</h1>
 				<div className="border-4 border-black p-8 rounded-lg">
 					<h2 className="text-2xl font-semibold mb-6">Register</h2>
-					<form onSubmit={ handleRegister } className="space-y-4">
+					<form onSubmit={handleRegister} className="space-y-4">
 						<input
-							name="name" type="text" placeholder="name" value={ registerForm.name } disabled={ registering }
-							onChange={ e => { setRegisterForm(f => ({ ...f, name: e.target.value })); setRegisterError(null); } }
+							name="name" type="text" placeholder="name" value={registerForm.name} disabled={registering}
+							onChange={e => { setRegisterForm(f => ({...f, name: e.target.value})); setRegisterError(null);}}
 							className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
 						<input
-							name="display_name" type="text" placeholder="display name" value={ registerForm.display_name } disabled={ registering }
-							onChange={ e => { setRegisterForm(f => ({ ...f, display_name: e.target.value })); setRegisterError(null); } }
+							name="display_name" type="text" placeholder="display name" value={registerForm.display_name} disabled={registering}
+							onChange={e => { setRegisterForm(f => ({...f, display_name: e.target.value})); setRegisterError(null);}}
 							className="w-full p-3 border border-gray-300 rounded-lg"
 						/>
 						<input
-							name="email" type="text" placeholder="email" value={ registerForm.email }
-							onChange={ e => { setRegisterForm(f => ({ ...f, email: e.target.value })); setRegisterError(null); } } disabled={ registering }
+							name="email" type="text" placeholder="email" value={registerForm.email}
+							onChange={e => {setRegisterForm(f => ({...f, email: e.target.value})); setRegisterError(null);}} disabled={registering}
 							className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
 						<input
-							name="password" type="password" placeholder="password" value={ registerForm.password } disabled={ registering }
-							onChange={ e => { setRegisterForm(f => ({ ...f, password: e.target.value })); setRegisterError(null); } }
+							name="password" type="password" placeholder="password" value={registerForm.password} disabled={registering}
+							onChange={e => {setRegisterForm(f => ({...f, password: e.target.value})); setRegisterError(null);}}
 							className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
-						<button disabled={ registering } className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 cursor-pointer transition-colors font-semibold">
-							{ registering ? "Registering..." : "Register" }
+						<button disabled={registering} className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 cursor-pointer transition-colors font-semibold">
+							{registering ? "Registering..." : "Register"}
 						</button>
-						{ registerError && <p className="text-red-500 mb-3 font-semibold">{ registerError }</p> }
+						{registerError && <p className="text-red-500 mb-3 font-semibold">{registerError}</p>}
 					</form>
 				</div>
 
 				<div className="border-4 border-black p-8 rounded-lg">
 					<h2 className="text-2xl font-semibold mb-6">Log in</h2>
-					<form onSubmit={ handleLogin } className="space-y-4">
+					<form onSubmit={handleLogin} className="space-y-4">
 						<input
-							name="login-name" type="text" placeholder="name" value={ loginForm.name } disabled={ loggingIn }
-							onChange={ e => setLoginForm(f => ({ ...f, name: e.target.value })) }
+							name="login-name" type="text" placeholder="name" value={loginForm.name} disabled={loggingIn}
+							onChange={e => setLoginForm(f => ({...f, name: e.target.value}))}
 							className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
 						<input
-							name="login-password" type="password" placeholder="password" value={ loginForm.password }
-							onChange={ e => setLoginForm(f => ({ ...f, password: e.target.value })) } disabled={ loggingIn }
+							name="login-password" type="password" placeholder="password" value={loginForm.password}
+							onChange={e => setLoginForm(f => ({...f, password: e.target.value}))} disabled={loggingIn}
 							className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
-						<button disabled={ loggingIn } className="w-full bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 cursor-pointer transition-colors font-semibold">
-							{ loggingIn ? "Logging in..." : "Log in" }
+						<button disabled={loggingIn} className="w-full bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 cursor-pointer transition-colors font-semibold">
+							{loggingIn ? "Logging in..." : "Log in"}
 						</button>
-						{ loginError && <p className="text-red-500 mb-3 font-semibold">{ loginError }</p> }
+						{loginError && <p className="text-red-500 mb-3 font-semibold">{loginError}</p>}
 					</form>
 				</div>
 			</div>
@@ -192,15 +192,15 @@ function Home() {
 		<Layout>
 			<div className="p-8 space-y-8">
 				<p className="text-xl font-semibold text-gray-700">
-					You are logged in as <span className="font-bold text-blue-600">{ user?.name }</span>
+					You are logged in as <span className="font-bold text-blue-600">{user?.name}</span>
 				</p>
 
 				<div className="border-1 p-8 rounded-lg">
 					<h2 className="text-2xl font-semibold mb-6">New post</h2>
 					<form onSubmit={handleCreatePost}>
 						<textarea
-							name="body" placeholder="Things beyond your screen..." value={ newPost.body } maxLength={ 400 }
-							onChange={e => setNewPost(p => ({ ...p, body: e.target.value }))}
+							name="body" placeholder="Things beyond your screen..." value={newPost.body} maxLength={400}
+							onChange={(e) => setNewPost(p => ({...p, body: e.target.value}))}
 							className="w-full p-4 border border-gray-300 rounded-lg resize-none"
 						/>
 						<p className="text-sm text-gray-500">
@@ -209,12 +209,11 @@ function Home() {
 						<button className="w-full bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 cursor-pointer transition-colors font-semibold">
 							Save post
 						</button>
-						{ formError && <p className="text-red-500 mb-3 font-semibold">{ formError }</p> }
+						{formError && <p className="text-red-500 mb-3 font-semibold">{formError}</p>}
 					</form>
 				</div>
-				{/* You know, this is kinda hard to read. Maybe do something? */}
 				<div className="rounded-lg">
-					{ view === "user" && (
+					{view === "user" && (
 						<button
 							onClick={() => {setView("feed"); setSelectedUserId(null);}}
 							className="mb-4 text-blue-600 hover:underline"
@@ -227,23 +226,20 @@ function Home() {
 						{posts.map(post => (
 							<div
 								key={post.id}
-								onClick={(e) => {
-									if (e.target.closest("[data-no-nav]")) return;
-									navigate(`/${post.user?.name}/${post.id}`);
-								}}
-								className="bg-gray-100 p-6 m-0 relative border border-gray-300 rounded-lg shadow-sm mb-2"
+								onClick={e => {if (e.target.closest("[data-no-nav]")) return; navigate(`/${post.user?.name}/${post.id}`);}}
+								className="bg-gray-100 p-6 m-0 relative border border-gray-300 rounded-lg shadow-sm mb-2 hover:bg-blue-100 cursor-pointer"
 							>
 								{post.isEditing ? (
 									// edit form, shows when editing
 									<div
 										className="border-2 border-blue-500 p-6 bg-blue-50 rounded-lg" data-no-nav
-										onClick={(e) => e.stopPropagation()}
+										onClick={e => e.stopPropagation()}
 									>
 										<h3 className="text-xl font-semibold mb-4 text-blue-800">Edit post</h3>
 										<textarea
 											value={post.editBody ?? post.body} placeholder="You can't leave this blank!"
 											maxLength={400}
-											onChange={(e) => { setPosts(prev => prev.map(p => p.id === post.id ? {...p, editBody: e.target.value} : p));}}
+											onChange={e => {setPosts(prev => prev.map(p => p.id === post.id ? {...p, editBody: e.target.value} : p));}}
 											className="w-full p-4 border border-gray-300 rounded-lg resize-none"
 										/>
 										<p className="text-sm text-gray-500">{(post.editBody ?? post.body).length}/400</p>
@@ -268,7 +264,7 @@ function Home() {
 									<>
 										<h3 className="text-xl font-semibold mb-3">
 											<span
-												onClick={(e) => {e.stopPropagation(); navigate(`/${post.user?.name}`);}}
+												onClick={e => {e.stopPropagation(); navigate(`/${post.user?.name}`);}}
 												className="text-blue-600 font-bold cursor-pointer hover:underline"
 											>
 												{post.user?.display_name} @{post.user?.name}
@@ -281,22 +277,22 @@ function Home() {
 											</span>
 										</h3>
 										{/* pre-wrap renders newlines in posts instead of removing them */}
-										<div className="whitespace-pre-wrap mb-4 text-gray-800 leading-relaxed">{ post.body }</div>
+										<div className="whitespace-pre-wrap mb-4 text-gray-800 leading-relaxed">{post.body}</div>
 										{/* this should only appear if a post author and current logged in user is the same */}
 										{post.user_id === user?.id && (
 											<div className="flex gap-3 pt-4">
 												<button
 													data-no-nav className="text-yellow-600 hover:underline cursor-pointer"
-													onClick={(e) => {
+													onClick={e => {
 														e.stopPropagation();
 														setPosts(prev => prev.map(
-															p => p.id === post.id ? { ...p, isEditing: true, editBody: p.body } : p));}}
+															p => p.id === post.id ? {...p, isEditing: true, editBody: p.body} : p));}}
 												>
 													Edit
 												</button>
 												<button
 													data-no-nav className="text-red-600 hover:underline cursor-pointer"
-													onClick={(e) => {e.stopPropagation(); handleDeletePost(post.id)}}
+													onClick={e => {e.stopPropagation(); handleDeletePost(post.id)}}
 												>
 													Delete
 												</button>
@@ -311,18 +307,24 @@ function Home() {
 				{/* Confirmation modal */}
 				{confirmState.show && (
 					<div
-						className="fixed inset-0 flex items-center justify-center bg-black/50"
-						data-no-nav
+						className="fixed inset-0 flex items-center justify-center bg-black/50" data-no-nav
 						onClick={closeConfirm}
 					>
 						<div
 							className="bg-white p-6 rounded-lg shadow-lg w-80"
-							onClick={(e) => e.stopPropagation()}
+							onClick={e => e.stopPropagation()}
 						>
 							<p className="text-lg mb-4">{confirmState.message}</p>
 							<div className="flex justify-end gap-3">
-								<button onClick={closeConfirm} className="px-4 py-2 border rounded cursor-pointer">Cancel</button>
-								<button onClick={confirmState.onConfirm} className="px-4 py-2 bg-red-600 cursor-pointer text-white rounded">Confirm</button>
+								<button onClick={closeConfirm} className="px-4 py-2 border rounded cursor-pointer">
+									Cancel
+								</button>
+								<button
+									className="px-4 py-2 bg-red-600 cursor-pointer text-white rounded"
+									onClick={confirmState.onConfirm}
+								>
+										Confirm
+									</button>
 							</div>
 						</div>
 					</div>
@@ -337,9 +339,9 @@ export default function Root() {
 	return (
 		<AuthProvider>
 			<Routes>
-				<Route path="/" element={ <Home/> }/>
-				<Route path="/:username" element={ <UserPage/> }/>
-				<Route path="/:username/:postId" element={ <PostPage/> }/>
+				<Route path="/" element={<Home/>}/>
+				<Route path="/:username" element={<UserPage/>}/>
+				<Route path="/:username/:postId" element={<PostPage/>}/>
 			</Routes>
 		</AuthProvider>
 	);

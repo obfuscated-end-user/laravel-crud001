@@ -92,7 +92,10 @@ export function AuthProvider({ children }) {
 		// Wraps the React component tree and tells React that everything inside here can read the
 		// value passed as `value={...}`, and that value object is that actual "auth state" that
 		// gets shared.
-		<AuthContext.Provider value={{ user, authenticated, loading, login, register, logout, loggingIn, registering, loginError, registerError, setLoginError, setRegisterError }}>
+		<AuthContext.Provider value={{
+			user, authenticated, loading, login, register, logout, loggingIn, registering,
+			loginError, registerError, setLoginError, setRegisterError
+		}}>
 			{ children /* Represents whatever components are inside <AuthProvider></AuthProvider> tags. */ }
 		</AuthContext.Provider>
 	);

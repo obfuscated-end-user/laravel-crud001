@@ -57,13 +57,13 @@ export default function PostPage() {
 					<p className="text-sm text-gray-500 mb-3">
 						{new Date(post.created_at).toLocaleString()}
 						{post.updated_at !== post.created_at && (
-							<><br/>{ "last edited at " + new Date(post.updated_at).toLocaleString() }</>
+							<><br/>{"last edited at " + new Date(post.updated_at).toLocaleString()}</>
 						)}
 					</p>
 					{isEditing ? (
 						<div>
 							<textarea
-								value={editBody} onChange={(e) => setEditBody(e.target.value)}
+								value={editBody} onChange={e => setEditBody(e.target.value)}
 								className="w-full p-4 border rounded-lg"
 							/>
 							<div className="flex gap-3 mt-2">
@@ -76,8 +76,18 @@ export default function PostPage() {
 					)}
 					{post.user_id === currentUser?.id && (
 						<div className="flex gap-3">
-							<button className="text-yellow-600 hover:underline cursor-pointer" onClick={() => {setIsEditing(true); setEditBody(post.body);}}>Edit</button>
-							<button className="text-red-600 hover:underline cursor-pointer" onClick={handleDelete}>Delete</button>
+							<button
+								className="text-yellow-600 hover:underline cursor-pointer"
+								onClick={() => {setIsEditing(true); setEditBody(post.body);}}
+							>
+									Edit
+							</button>
+							<button
+								className="text-red-600 hover:underline cursor-pointer"
+								onClick={handleDelete}
+							>
+								Delete
+							</button>
 						</div>
 					)}
 				</div>

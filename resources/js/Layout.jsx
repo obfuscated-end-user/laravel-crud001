@@ -15,19 +15,17 @@ export default function Layout({ children }) {
 					<a className="block hover:underline cursor-pointer">Profile</a>
 					<a className="block hover:underline cursor-pointer">Settings</a>
 					<a className="block hover:underline cursor-pointer">New post</a>
-					<button onClick={ logout } className="block text-left w-full hover:underline cursor-pointer text-red-600">
+					<button onClick={logout} className="block text-left w-full hover:underline cursor-pointer text-red-600">
 						Log out
 					</button>
 				</nav>
 				{/* Push footer down */}
 				<div className="mt-auto text-sm text-gray-500">
-					© { new Date().getFullYear() } random programmers incorporated.
+					© {new Date().getFullYear()} random programmers incorporated.
 				</div>
 			</div>
 			{/* main scrollable content */}
-			<div className="w-full max-w-3xl p-8">
-				{ children }
-			</div>
+			<div className="w-full max-w-3xl p-8">{children}</div>
 			{/* right sidebar */}
 			<div className="w-64 bg-white border-l p-4 sticky top-0 h-screen">
 				<h2 className="font-semibold mb-4">Trending</h2>
