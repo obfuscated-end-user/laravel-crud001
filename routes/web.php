@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PostController;
 
+// (TBH, this file looks garbled.)
 // routes/web.php is like the URL map of your entire application.
 // It tells Laravel "when user visits this URL, run this code".
 
@@ -62,11 +63,11 @@ Route::get("/edit-post/{post}", [PostController::class, 'showEditScreen']);
 Route::put("/edit-post/{post}", [PostController::class, 'updatePost']);
 Route::delete("/delete-post/{post}", [PostController::class, 'deletePost']);
 
-Route::get('/{user:name}', function (\App\Models\User $user) {
+Route::get('/u/{user:name}', function () {
 	return view('app');
 });
 
-Route::get('/{user:name}/{post}', function (\App\Models\User $user, \App\Models\Post $post) {
+Route::get('/u/{user:name}/{post}', function () {
 	return view('app');
 })->where('post', '[A-Za-z0-9_-]{1,15}');
 

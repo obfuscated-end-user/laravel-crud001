@@ -6,6 +6,7 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import Layout from "./Layout";
 import UserPage from "./pages/UserPage";
 import PostPage from "./pages/PostPage";
+import NotFound from "./pages/NotFound";
 
 // This is the main React app component that shows the login/register UI when the user is not
 // authenticated, the post creation and post list UI when the user is logged in.
@@ -213,20 +214,12 @@ function Home() {
 					</form>
 				</div>
 				<div className="rounded-lg">
-					{view === "user" && (
-						<button
-							onClick={() => {setView("feed"); setSelectedUserId(null);}}
-							className="mb-4 text-blue-600 hover:underline"
-						>
-							&lt;&lt; back
-						</button>
-					)}
 					{postsLoading && <p className="text-lg text-gray-500">Loading posts...</p>}
 					<div className="space-y-4">
 						{posts.map(post => (
 							<div
 								key={post.id}
-								onClick={e => {if (e.target.closest("[data-no-nav]")) return; navigate(`/${post.user?.name}/${post.id}`);}}
+								onClick={e => {if (e.target.closest("[data-no-nav]")) return; navigate(`/u/${post.user?.name}/${post.id}`);}}
 								className="bg-gray-100 p-6 m-0 relative border border-gray-300 rounded-lg shadow-sm mb-2 hover:bg-blue-100 cursor-pointer"
 							>
 								{post.isEditing ? (
@@ -264,7 +257,7 @@ function Home() {
 									<>
 										<h3 className="text-xl font-semibold mb-3">
 											<span
-												onClick={e => {e.stopPropagation(); navigate(`/${post.user?.name}`);}}
+												onClick={e => {e.stopPropagation(); navigate(`/u/${post.user?.name}`);}}
 												className="text-blue-600 font-bold cursor-pointer hover:underline"
 											>
 												{post.user?.display_name} @{post.user?.name}
@@ -340,8 +333,9 @@ export default function Root() {
 		<AuthProvider>
 			<Routes>
 				<Route path="/" element={<Home/>}/>
-				<Route path="/:username" element={<UserPage/>}/>
-				<Route path="/:username/:postId" element={<PostPage/>}/>
+				<Route path="/u/:username" element={<UserPage/>}/>
+				<Route path="/u/:username/:postId" element={<PostPage/>}/>
+				<Route path="*" element={<NotFound/>}/>
 			</Routes>
 		</AuthProvider>
 	);

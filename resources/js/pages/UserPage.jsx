@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axiosClient from "../api/axiosClient";
 import Layout from "../Layout";
 import { useAuth } from "../AuthContext";
+import NotFound from "./NotFound";
 
 export default function UserPage() {
 	const { username } = useParams();
@@ -21,10 +22,12 @@ export default function UserPage() {
 				setUser(userRes.data);
 				setPosts(postsRes.data);
 			})
+			.catch(() => setUser(null))
 			.finally(() => setLoading(false));
 	}, [username]);
 
 	if (loading) return <div className="p-8">Loading...</div>;
+	if (!loading && !user) return <NotFound />;
 
 	return (
 		<Layout>
@@ -41,7 +44,7 @@ export default function UserPage() {
 							key={post.id} className="bg-gray-100 p-6 border rounded-lg cursor-pointer"
 							onClick={e => {
 								if (e.target.closest("[data-no-nav]")) return;
-								navigate(`/${post.user?.name}/${post.id}`);
+								navigate(`/u/${post.user?.name}/${post.id}`);
 							}}
 						>
 							<h3 className="text-sm text-gray-500 mb-2">{new Date(post.created_at).toLocaleString()}</h3>

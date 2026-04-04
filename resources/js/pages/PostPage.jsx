@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axiosClient from "../api/axiosClient";
 import Layout from "../Layout";
 import { useAuth } from "../AuthContext";
+import NotFound from "./NotFound";
 
 export default function PostPage() {
 	const { username, postId } = useParams();
@@ -29,26 +30,22 @@ export default function PostPage() {
 	useEffect(() => {
 		setLoading(true);
 		axiosClient.get(`/api/posts/${postId}`)
-			.then(res => {
-				setPost(res.data);
-			})
+			.then(res => setPost(res.data))
+			.catch(() => setPost(null))
 			.finally(() => setLoading(false));
 	}, [postId]);
 
 	if (loading) return <div className="p-8">Loading...</div>;
-	if (!post) return <div className="p-8">Post not found</div>;
+	if (!loading && !post) return <NotFound />;
 
 	return (
 		<Layout>
 			<div className="space-y-6">
-				<button onClick={ () => navigate(`/${username}`) } className="text-blue-600 hover:underline">
-					&lt;&lt; back
-				</button>
 				{/* post */}
 				<div className="bg-gray-100 p-6 border rounded-lg">
 					<h3 className="mb-2">
 						<span
-							onClick={() => navigate(`/${post.user?.name}`)}
+							onClick={() => navigate(`/u/${post.user?.name}`)}
 							className="text-blue-600 font-bold cursor-pointer hover:underline"
 						>
 							{post.user?.display_name} @{post.user?.name}
@@ -67,15 +64,25 @@ export default function PostPage() {
 								className="w-full p-4 border rounded-lg"
 							/>
 							<div className="flex gap-3 mt-2">
-								<button onClick={handleUpdate} className="text-blue-600">Save</button>
-								<button onClick={() => setIsEditing(false)} className="text-gray-600">Cancel</button>
+								<button
+								onClick={handleUpdate}
+								className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 cursor-pointer transition-colors font-semibold"
+								>
+									Save
+								</button>
+								<button
+									onClick={() => setIsEditing(false)}
+									className="px-4 py-2 border border-gray-300 text-gray-700 cursor-pointer rounded-lg hover:bg-gray-50 transition-colors"
+								>
+									Cancel
+								</button>
 							</div>
 						</div>
 					) : (
 						<div className="whitespace-pre-wrap mb-4">{post.body}</div>
 					)}
 					{post.user_id === currentUser?.id && (
-						<div className="flex gap-3">
+						<div className="flex gap-3 pt-4">
 							<button
 								className="text-yellow-600 hover:underline cursor-pointer"
 								onClick={() => {setIsEditing(true); setEditBody(post.body);}}
