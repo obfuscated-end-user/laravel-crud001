@@ -27,7 +27,7 @@ export default function UserPage() {
 	}, [username]);
 
 	if (loading) return <div className="p-8">Loading...</div>;
-	if (!loading && !user) return <NotFound />;
+	if (!loading && !user) return <NotFound/>;
 
 	return (
 		<Layout>

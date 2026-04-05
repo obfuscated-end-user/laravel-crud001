@@ -36,7 +36,7 @@ export default function PostPage() {
 	}, [postId]);
 
 	if (loading) return <div className="p-8">Loading...</div>;
-	if (!loading && !post) return <NotFound />;
+	if (!loading && !post) return <NotFound/>;
 
 	return (
 		<Layout>
