@@ -65,14 +65,16 @@ export default function PostPage() {
 							/>
 							<div className="flex gap-3 mt-2">
 								<button
-								onClick={handleUpdate}
-								className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 cursor-pointer transition-colors font-semibold"
+									onClick={handleUpdate}
+									className={"flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 " +
+										"cursor-pointer transition-colors font-semibold"}
 								>
 									Save
 								</button>
 								<button
 									onClick={() => setIsEditing(false)}
-									className="px-4 py-2 border border-gray-300 text-gray-700 cursor-pointer rounded-lg hover:bg-gray-50 transition-colors"
+									className={"px-4 py-2 border border-gray-300 text-gray-700 cursor-pointer " +
+										"rounded-lg hover:bg-gray-50 transition-colors"}
 								>
 									Cancel
 								</button>
@@ -81,18 +83,15 @@ export default function PostPage() {
 					) : (
 						<div className="whitespace-pre-wrap mb-4">{post.body}</div>
 					)}
-					{post.user_id === currentUser?.id && (
+					{post.user_id === currentUser?.id && !isEditing && (
 						<div className="flex gap-3 pt-4">
 							<button
 								className="text-yellow-600 hover:underline cursor-pointer"
 								onClick={() => {setIsEditing(true); setEditBody(post.body);}}
 							>
-									Edit
+								Edit
 							</button>
-							<button
-								className="text-red-600 hover:underline cursor-pointer"
-								onClick={handleDelete}
-							>
+							<button onClick={handleDelete} className="text-red-600 hover:underline cursor-pointer">
 								Delete
 							</button>
 						</div>
