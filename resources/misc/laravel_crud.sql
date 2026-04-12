@@ -1,6 +1,3 @@
--- context
--- go to: C:\Users\Hello\Desktop\files\ZZZ_E_Drive\Projects\Laravel\laravel-crud
-
 SELECT * FROM laravel_crud.users;
 DESCRIBE laravel_crud.users;
 
