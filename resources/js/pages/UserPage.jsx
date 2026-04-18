@@ -53,61 +53,67 @@ export default function UserPage() {
 				</div>
 				{/* posts */}
 				<div className="space-y-4">
-					{posts.map(post => (
-						<div
+					{posts.map(post=>(
+						<div 
 							key={post.id}
-							className={"bg-gray-100 p-6 m-0 relative border border-gray-300 rounded-lg shadow-sm mb-2 "
-								+ (isEditingAny && !post.isEditing ? "opacity-60": "hover:bg-blue-100 cursor-pointer")}
-							onClick={e => {
+							className={
+								"bg-gray-100 p-6 m-0 relative border border-gray-300 rounded-lg shadow-sm mb-2 "+
+								(isEditingAny && !post.isEditing ? "opacity-60" : "hover:bg-blue-100 cursor-pointer")
+							}
+							onClick={ e => {
 								if (isEditingAny) return;
 								if (e.target.closest("[data-no-nav]")) return;
 								navigate(`/u/${post.user?.name}/${post.id}`);
 							}}
 						>
 							<h3 className="text-sm text-gray-500 mb-2">{new Date(post.created_at).toLocaleString()}</h3>
-							{!post.isEditing && (<div className="whitespace-pre-wrap">{post.body}</div>)}
+							{!post.isEditing && (
+								<div className="whitespace-pre-wrap mb-4 text-gray-800 leading-relaxed">{post.body}</div>
+							)}
 							{post.isEditing ? (
-								<div data-no-nav>
-									<textarea
-										className="w-full p-4 border rounded-lg" value={post.editBody ?? post.body}
+								<div data-no-nav className="border-2 border-blue-500 p-6 bg-blue-50 rounded-lg">
+									<textarea 
+										className="w-full p-4 border border-gray-300 rounded-lg resize-none"
+										value={post.editBody??post.body}
 										onChange={e => setPosts(prev => prev.map(
-											p => p.id === post.id ? {...p, editBody: e.target.value} : p))}
+											p => p.id === post.id ? {...p, editBody:e.target.value} : p))}
 									/>
-									<div className="flex gap-3 mt-2">
-									<button
-										className={"flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg " +
-											"hover:bg-blue-700 cursor-pointer transition-colors font-semibold"}
-										onClick={() => handleUpdate(post.id, post.editBody ?? "")}
-									>
-										Save
-									</button>
-									<button
-										className={"px-4 py-2 border border-gray-300 text-gray-700 cursor-pointer " +
-											"rounded-lg hover:bg-gray-50 transition-colors"}
-										onClick={() => setPosts(prev => prev.map(
-											p => p.id === post.id ? {...p, isEditing: false} : p))}
-									>
-										Cancel
-									</button>
+									<p className="text-sm text-gray-500">{(post.editBody??post.body).length}/400</p>
+									<div className="flex gap-3 pt-2">
+										<button 
+											className={"flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg " +
+												"hover:bg-blue-700 cursor-pointer transition-colors font-semibold"}
+											onClick={() => handleUpdate(post.id, post.editBody ?? "")}
+										>
+											Save
+										</button>
+										<button 
+											className={"px-4 py-2 border border-gray-300 text-gray-700 " +
+												"cursor-pointer rounded-lg hover:bg-gray-50 transition-colors"}
+											onClick={() => setPosts(prev => prev.map(
+												p => p.id === post.id ? {...p, isEditing:false} : p))}
+										>
+											Cancel
+										</button>
 									</div>
 								</div>
 							) : (
-								post.user_id === currentUser?.id && (
-									<div className="flex gap-3 pt-3">
-									<button
+							post.user_id === currentUser?.id && (
+								<div className="flex gap-3 pt-4">
+									<button 
 										className="text-yellow-600 hover:underline cursor-pointer" data-no-nav
 										onClick={() => setPosts(prev => prev.map(
-											p => p.id === post.id ? {...p, isEditing: true, editBody: p.body} : p))}
+											p => p.id === post.id ? {...p, isEditing : true, editBody : p.body} : p))}
 									>
 										Edit
 									</button>
-									<button
-										className="text-red-600 hover:underline cursor-pointer" data-no-nav
+									<button 
+										className="text-red-600 hover:underline cursor-pointer" data-no-nav 
 										onClick={() => handleDelete(post.id)}
 									>
 										Delete
 									</button>
-									</div>
+								</div>
 								)
 							)}
 						</div>
