@@ -32,7 +32,15 @@ Route::get('/users/{user}/posts', function (\App\Models\User $user) {
 });
 
 Route::get('/api/users/{user:name}', function (\App\Models\User $user) {
-	return $user;
+	// return $user;
+	return response()->json([
+		'id' => $user->id,
+		'name' => $user->name,
+		'display_name' => $user->display_name,
+		'created_at' => $user->created_at,
+		'updated_at' => $user->updated_at,
+		'post_count' => $user->usersPosts()->count()
+	]);
 });
 
 Route::get('/api/users/{user:name}/posts', function (\App\Models\User $user) {

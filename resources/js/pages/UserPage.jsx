@@ -21,7 +21,7 @@ export default function UserPage() {
 			p => p.id === id ? { ...res.data, isEditing: false, editBody: "" } : p));
 	};
 
-	const handleDelete = async (id) => {
+	const handleDelete = async id => {
 		if (!confirm("Delete this post?")) return;
 		await axiosClient.delete(`/delete-post/${id}`);
 		setPosts(prev => prev.filter(p => p.id !== id));
@@ -48,19 +48,32 @@ export default function UserPage() {
 		<Layout>
 			<div className="space-y-6">
 				{/* user header */}
-				<div className="border p-6 rounded-lg bg-white">
-					<h1 className="text-2xl font-bold">{user.display_name} @{user.name}</h1>
+				<div className="border p-6 rounded-xl bg-white shadow-sm space-y-4">
+					<div>
+						<h1 className="text-2xl font-bold text-gray-900">{user.display_name}</h1>
+						<p className="text-blue-600 font-medium">@{user.name}</p>
+					</div>
+					<div className="grid grid-cols-2 gap-4 text-sm">
+						<div>
+							<p className="text-gray-400">Joined</p>
+							<p className="font-medium">{new Date(user.created_at).toLocaleDateString()}</p>
+						</div>
+						<div>
+							<p className="text-gray-400">Posts</p>
+							<p className="font-medium">{user.post_count}</p>
+						</div>
+					</div>
 				</div>
 				{/* posts */}
 				<div className="space-y-4">
-					{posts.map(post=>(
+					{posts.map(post => (
 						<div 
 							key={post.id}
 							className={
 								"bg-gray-100 p-6 m-0 relative border border-gray-300 rounded-lg shadow-sm mb-2 "+
 								(isEditingAny && !post.isEditing ? "opacity-60" : "hover:bg-blue-100 cursor-pointer")
 							}
-							onClick={ e => {
+							onClick={e => {
 								if (isEditingAny) return;
 								if (e.target.closest("[data-no-nav]")) return;
 								navigate(`/u/${post.user?.name}/${post.id}`);
@@ -98,22 +111,22 @@ export default function UserPage() {
 									</div>
 								</div>
 							) : (
-							post.user_id === currentUser?.id && (
-								<div className="flex gap-3 pt-4">
-									<button 
-										className="text-yellow-600 hover:underline cursor-pointer" data-no-nav
-										onClick={() => setPosts(prev => prev.map(
-											p => p.id === post.id ? {...p, isEditing : true, editBody : p.body} : p))}
-									>
-										Edit
-									</button>
-									<button 
-										className="text-red-600 hover:underline cursor-pointer" data-no-nav 
-										onClick={() => handleDelete(post.id)}
-									>
-										Delete
-									</button>
-								</div>
+								post.user_id === currentUser?.id && (
+									<div className="flex gap-3 pt-4">
+										<button 
+											className="text-yellow-600 hover:underline cursor-pointer" data-no-nav
+											onClick={() => setPosts(prev => prev.map(
+												p => p.id === post.id ? {...p, isEditing : true, editBody : p.body} : p))}
+										>
+											Edit
+										</button>
+										<button 
+											className="text-red-600 hover:underline cursor-pointer" data-no-nav 
+											onClick={() => handleDelete(post.id)}
+										>
+											Delete
+										</button>
+									</div>
 								)
 							)}
 						</div>

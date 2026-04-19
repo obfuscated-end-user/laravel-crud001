@@ -57,7 +57,7 @@ export default function PostPage() {
 							<><br/>{"last edited at " + new Date(post.updated_at).toLocaleString()}</>
 						)}
 					</p>
-					{isEditing?(
+					{isEditing ? (
 						<div className="border-2 border-blue-500 p-6 bg-blue-50 rounded-lg">
 							<h3 className="text-xl font-semibold mb-4 text-blue-800">Edit post</h3>
 							<textarea 
@@ -66,14 +66,14 @@ export default function PostPage() {
 							/>
 							<p className="text-sm text-gray-500">{editBody.length}/400</p>
 							<div className="flex gap-3 mt-2">
-							<button 
+							<button
 								onClick={handleUpdate}
 								className={"flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg " +
 									"hover:bg-blue-700 cursor-pointer transition-colors font-semibold"}
 							>
 								Save
 							</button>
-							<button 
+							<button
 								onClick={() => setIsEditing(false)}
 								className={"px-4 py-2 border border-gray-300 text-gray-700 " +
 									"cursor-pointer rounded-lg hover:bg-gray-50 transition-colors"}
