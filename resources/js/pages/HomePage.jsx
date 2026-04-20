@@ -44,7 +44,7 @@ export default function HomePage() {
 		setConfirmState({ show: false, message: "", onConfirm: null });
 	};
 
-	const handleRegister = async (e) => {
+	const handleRegister = async e => {
 		e.preventDefault();	// prevent the page from reloading
 		// Call register(name, email, password), which hits "POST /register", see function in
 		// AuthContext.jsx.

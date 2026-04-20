@@ -1,9 +1,4 @@
-export default function NewPostForm({
-	newPost,
-	setNewPost,
-	onSubmit,
-	error,
-}) {
+export default function NewPostForm({ newPost, setNewPost, onSubmit, error }) {
 	return (
 		<div className="border p-8 rounded-lg">
 			<h2 className="text-2xl font-semibold mb-6">New post</h2>

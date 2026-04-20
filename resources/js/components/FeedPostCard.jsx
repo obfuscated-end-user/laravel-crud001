@@ -20,7 +20,7 @@ export default function FeedPostCard({ post, user, navigate, isEditingAny, setPo
 					<textarea
 						value={post.editBody ?? post.body} placeholder="You can't leave this blank!"
 						maxLength={400}
-						onChange={e => setPosts((prev) => prev.map(
+						onChange={e => setPosts(prev => prev.map(
 							p => p.id === post.id ? {...p, editBody: e.target.value} : p))}
 						className="w-full p-4 border border-gray-300 rounded-lg resize-none"
 					/>

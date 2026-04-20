@@ -72,9 +72,7 @@ export function AuthProvider({ children }) {
 				const errors = err.response.data.errors;
 				const firstError = Object.values(errors)[0][0];
 				setRegisterError(firstError);
-			} else {
-				setRegisterError("Registration failed");
-			}
+			} else setRegisterError("Registration failed");
 		} finally {
 			setRegistering(false);
 		}
