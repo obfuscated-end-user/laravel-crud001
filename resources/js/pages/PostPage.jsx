@@ -4,6 +4,8 @@ import axiosClient from "../api/axiosClient";
 import Layout from "../Layout";
 import { useAuth } from "../AuthContext";
 import NotFound from "./NotFound";
+import PostEditor from "../components/PostEditor";
+import ConfirmModal from "../components/ConfirmModal";
 
 export default function PostPage() {
 	const { username, postId } = useParams();
@@ -13,18 +15,35 @@ export default function PostPage() {
 	const [loading, setLoading] = useState(true);
 	const [isEditing, setIsEditing] = useState(false);
 	const [editBody, setEditBody] = useState("");
+	const [confirmState, setConfirmState] = useState({ show: false, message: "", onConfirm: null });
 
-	const handleDelete = async () => {
-		if (!confirm("Delete this post?")) return;
-		await axiosClient.delete(`/delete-post/${post.id}`);
-		navigate(`/${username}`);
+	const handleDelete = () => {
+		openConfirm("Delete this post?", async () => {
+			await axiosClient.delete(`/delete-post/${post.id}`);
+			navigate(`/${username}`);
+			closeConfirm();
+		});
+	};
+
+	const handleUpdate = () => {
+		if (!editBody.trim()) return;
+		openConfirm("Save changes to this post?", async () => {
+			try {
+				const res = await axiosClient.put(`/edit-post/${post.id}`, { body: editBody });
+				setPost(res.data);
+				setIsEditing(false);
+			} catch (err) {
+				alert("Failed to update post");
+			}
+		});
+	};
+
+	const openConfirm = (message, onConfirm) => {
+		setConfirmState({ show: true, message, onConfirm });
 	}
 
-	const handleUpdate = async () => {
-		if (!editBody.trim()) return;
-		const res = await axiosClient.put(`/edit-post/${post.id}`, {body: editBody});
-		setPost(res.data);
-		setIsEditing(false);
+	const closeConfirm = () => {
+		setConfirmState({ show: false, message: "", onConfirm: null });
 	}
 
 	useEffect(() => {
@@ -40,73 +59,56 @@ export default function PostPage() {
 
 	return (
 		<Layout>
-			<div className="space-y-6">
-				{/* post */}
-				<div className="bg-gray-100 p-6 border rounded-lg">
-					<h3 className="mb-2">
-						<span
-							onClick={() => navigate(`/u/${post.user?.name}`)}
-							className="text-blue-600 font-bold cursor-pointer hover:underline"
-						>
-							{post.user?.display_name} @{post.user?.name}
-						</span>
-					</h3>
-					<p className="text-sm text-gray-500 mb-3">
-						{new Date(post.created_at).toLocaleString()}
-						{post.updated_at !== post.created_at && (
-							<><br/>{"last edited at " + new Date(post.updated_at).toLocaleString()}</>
-						)}
-					</p>
-					{isEditing ? (
-						<div className="border-2 border-blue-500 p-6 bg-blue-50 rounded-lg">
-							<h3 className="text-xl font-semibold mb-4 text-blue-800">Edit post</h3>
-							<textarea 
-								value={editBody} onChange={e => setEditBody(e.target.value)}
-								className="w-full p-4 border border-gray-300 rounded-lg resize-none"
-							/>
-							<p className="text-sm text-gray-500">{editBody.length}/400</p>
-							<div className="flex gap-3 mt-2">
-							<button
-								onClick={handleUpdate}
-								className={"flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg " +
-									"hover:bg-blue-700 cursor-pointer transition-colors font-semibold"}
+			<div className="bg-gray-100 p-6 border rounded-lg">
+				{isEditing ? (
+					<PostEditor
+						value={editBody} setValue={setEditBody} onSave={handleUpdate}
+						onCancel={() => setIsEditing(false)}
+					/>
+				) : (
+					<>
+						<h3 className="mb-2">
+							<span
+								onClick={() => navigate(`/u/${post.user?.name}`)}
+								className="text-blue-600 font-bold cursor-pointer hover:underline"
 							>
-								Save
-							</button>
-							<button
-								onClick={() => setIsEditing(false)}
-								className={"px-4 py-2 border border-gray-300 text-gray-700 " +
-									"cursor-pointer rounded-lg hover:bg-gray-50 transition-colors"}
-							>
-								Cancel
-							</button>
-							</div>
-						</div>
-					) : (
-						<div
-							className="whitespace-pre-wrap mb-4 text-gray-800 leading-relaxed"
-						>
+								{post.user?.display_name}@{post.user?.name}
+							</span>
+						</h3>
+
+						<p className="text-sm text-gray-500 mb-3">
+							{new Date(post.created_at).toLocaleString()}
+							{post.updated_at !== post.created_at && (
+								<><br/>{"last edited at " + new Date(post.updated_at).toLocaleString()}</>
+							)}
+						</p>
+
+						<div className="whitespace-pre-wrap mb-4 text-gray-800 leading-relaxed">
 							{post.body}
 						</div>
-					)}
-					{post.user_id === currentUser?.id && !isEditing && (
-						<div className="flex gap-3 pt-4">
-							<button
-								className="text-yellow-600 hover:underline cursor-pointer"
-								onClick={() => {setIsEditing(true); setEditBody(post.body);}}
-							>
-								Edit
-							</button>
-							<button
-								onClick={handleDelete}
-								className="text-red-600 hover:underline cursor-pointer"
-							>
-								Delete
-							</button>
-						</div>
-					)}
-				</div>
+						{post.user_id === currentUser?.id && (
+							<div className="flex gap-3 pt-4">
+								<button
+									className="text-yellow-600 hover:underline cursor-pointer"
+									onClick={() => {setIsEditing(true); setEditBody(post.body);}}
+								>
+									Edit
+								</button>
+
+								<button
+									onClick={handleDelete} className="text-red-600 hover:underline cursor-pointer"
+								>
+									Delete
+								</button>
+							</div>
+						)}
+					</>
+				)}
 			</div>
+			<ConfirmModal
+				show={confirmState.show} message={confirmState.message} onClose={closeConfirm}
+				onConfirm={confirmState.onConfirm}
+			/>
 		</Layout>
 	);
 }

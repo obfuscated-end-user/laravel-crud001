@@ -11,7 +11,7 @@ use App\Http\Controllers\PostController;
 Route::get('/me', function () {
 	return response()->json([
 		'authenticated' => auth()->guard()->check(),
-		'user' => auth()->guard()->check() ? auth()->guard()->user() : null,
+		'user' => auth()->guard()->check() ? auth()->guard()->user() : null
 	]);
 });
 

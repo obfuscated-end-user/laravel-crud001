@@ -1,3 +1,5 @@
+import PostEditor from "./PostEditor";
+
 export default function FeedPostCard({ post, user, navigate, isEditingAny, setPosts, onDelete, onUpdate }) {
 	return (
 		<div
