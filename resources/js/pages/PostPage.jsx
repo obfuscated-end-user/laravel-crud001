@@ -6,6 +6,7 @@ import { useAuth } from "../AuthContext";
 import NotFound from "./NotFound";
 import PostEditor from "../components/PostEditor";
 import ConfirmModal from "../components/ConfirmModal";
+import FeedPostCard from "../components/FeedPostCard";
 
 export default function PostPage() {
 	const { username, postId } = useParams();
@@ -20,7 +21,8 @@ export default function PostPage() {
 	const handleDelete = () => {
 		openConfirm("Delete this post?", async () => {
 			await axiosClient.delete(`/delete-post/${post.id}`);
-			navigate(`/${username}`);
+			// navigate(`/u/${username}`);
+			navigate("/");	// go to home page instead of 404ing
 			closeConfirm();
 		});
 	};
@@ -59,52 +61,19 @@ export default function PostPage() {
 
 	return (
 		<Layout>
-			<div className="bg-gray-100 p-6 border rounded-lg">
-				{isEditing ? (
-					<PostEditor
-						value={editBody} setValue={setEditBody} onSave={handleUpdate}
-						onCancel={() => setIsEditing(false)}
-					/>
-				) : (
-					<>
-						<h3 className="mb-2">
-							<span
-								onClick={() => navigate(`/u/${post.user?.name}`)}
-								className="text-blue-600 font-bold cursor-pointer hover:underline"
-							>
-								{post.user?.display_name}@{post.user?.name}
-							</span>
-						</h3>
-
-						<p className="text-sm text-gray-500 mb-3">
-							{new Date(post.created_at).toLocaleString()}
-							{post.updated_at !== post.created_at && (
-								<><br/>{"last edited at " + new Date(post.updated_at).toLocaleString()}</>
-							)}
-						</p>
-
-						<div className="whitespace-pre-wrap mb-4 text-gray-800 leading-relaxed">
-							{post.body}
-						</div>
-						{post.user_id === currentUser?.id && (
-							<div className="flex gap-3 pt-4">
-								<button
-									className="text-yellow-600 hover:underline cursor-pointer"
-									onClick={() => {setIsEditing(true); setEditBody(post.body);}}
-								>
-									Edit
-								</button>
-
-								<button
-									onClick={handleDelete} className="text-red-600 hover:underline cursor-pointer"
-								>
-									Delete
-								</button>
-							</div>
-						)}
-					</>
-				)}
-			</div>
+			<FeedPostCard
+				post={post} user={currentUser} navigate={navigate} isEditingAny={isEditing}
+				setPosts={fn => {
+						// adapt single post into array-like update
+						setPost(prev => {
+						const updated = fn([prev])[0];
+						return updated;
+					});
+				}}
+				onDelete={() => handleDelete()}
+				onUpdate={(id, body) => { setEditBody(body); handleUpdate(); }}
+				disableNavigation={true}
+			/>
 			<ConfirmModal
 				show={confirmState.show} message={confirmState.message} onClose={closeConfirm}
 				onConfirm={confirmState.onConfirm}

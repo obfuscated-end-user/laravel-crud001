@@ -117,18 +117,20 @@ export default function HomePage() {
 	// If not authenticated, show a register and login form.
 	if (!authenticated) {
 		return (
-			<div className="max-w-2xl mx-auto p-8 space-y-8">
-				<h1 className="text-4xl font-bold text-center mb-12">Outside</h1>
-				<RegisterForm
-					form={registerForm} setForm={setRegisterForm} onSubmit={handleRegister}
-					loading={registering} error={registerError}
-					clearError={() => setRegisterError(null)}
-				/>
-				<LoginForm
-					form={loginForm} setForm={setLoginForm} onSubmit={handleLogin}
-					loading={loggingIn} error={loginError} clearError={() => setLoginError(null)}
-				/>
-			</div>
+			<Layout>
+				<div className="p-8 space-y-8">
+					<h1 className="text-4xl font-bold text-center mb-12">Outside</h1>
+					<RegisterForm
+						form={registerForm} setForm={setRegisterForm} onSubmit={handleRegister}
+						loading={registering} error={registerError}
+						clearError={() => setRegisterError(null)}
+					/>
+					<LoginForm
+						form={loginForm} setForm={setLoginForm} onSubmit={handleLogin}
+						loading={loggingIn} error={loginError} clearError={() => setLoginError(null)}
+					/>
+				</div>
+			</Layout>
 		);
 	}
 
@@ -136,7 +138,7 @@ export default function HomePage() {
 	// create a new post, a list of all their posts.
 	return (
 		<Layout>
-			<div className="p-8 space-y-8">
+			<div className="space-y-6">
 				<p className="text-xl font-semibold text-gray-700">
 					You are logged in as{" "}
 					<span className="font-bold text-blue-600">{user?.name}</span>

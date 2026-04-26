@@ -1,16 +1,25 @@
 import PostEditor from "./PostEditor";
 
-export default function FeedPostCard({ post, user, navigate, isEditingAny, setPosts, onDelete, onUpdate }) {
+export default function FeedPostCard({ post, user, navigate, isEditingAny, setPosts, onDelete, onUpdate, disableNavigation = false, onNavigateOverride = null }) {
+	const handleNavigate = () => {
+		if (disableNavigation) return;
+		if (onNavigateOverride) return onNavigateOverride(post);
+		navigate(`/u/${post.user?.name}/${post.id}`);
+	}
+
 	return (
 		<div
 			onClick={e => {
 				if (isEditingAny) return;
 				if (e.target.closest("[data-no-nav]")) return;
-				navigate(`/u/${post.user?.name}/${post.id}`);
+				handleNavigate();
+				// navigate(`/u/${post.user?.name}/${post.id}`);
 			}}
 			className={
 				"bg-gray-100 p-6 m-0 relative border border-gray-300 rounded-lg shadow-sm mb-2 " +
-				(isEditingAny && !post.isEditing ? "opacity-60" : "hover:bg-blue-100 cursor-pointer")
+				(isEditingAny && !post.isEditing ? "opacity-60" : !disableNavigation
+				? "hover:bg-blue-100 cursor-pointer"
+				: "")
 			}
 		>
 			{post.isEditing ? (
@@ -72,9 +81,14 @@ export default function FeedPostCard({ post, user, navigate, isEditingAny, setPo
 					{post.user_id === user?.id && (
 						<div className="flex gap-3 pt-4">
 							<button
-								className="text-yellow-600 hover:underline cursor-pointer" data-no-nav
+								className={
+									"text-yellow-600 hover:underline cursor-pointer" +
+									(isEditingAny && !post.isEditing ? "opacity-50 pointer-events-none" : "")
+								}
+								data-no-nav
 								onClick={e => {
 									e.stopPropagation();
+									if (isEditingAny && !post.isEditing) return;
 									setPosts(prev => prev.map(p => p.id === post.id ?
 										{...p, isEditing: true, editBody: p.body} : p));
 								}}
@@ -82,8 +96,16 @@ export default function FeedPostCard({ post, user, navigate, isEditingAny, setPo
 								Edit
 							</button>
 							<button
-								className="text-red-600 hover:underline cursor-pointer" data-no-nav
-								onClick={e => {e.stopPropagation(); onDelete(post.id);}}
+								className={
+									"text-red-600 hover:underline cursor-pointer" +
+									(isEditingAny && !post.isEditing ? "opacity-50 pointer-events-none" : "")
+								}
+								data-no-nav
+								onClick={e => {
+									e.stopPropagation();
+									if (isEditingAny && !post.isEditing) return;
+									onDelete(post.id);
+								}}
 							>
 								Delete
 							</button>
